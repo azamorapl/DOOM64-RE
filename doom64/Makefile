@@ -55,13 +55,15 @@ AR        := mips-n64-ar
 OBJDUMP   := mips-n64-objdump
 OBJCOPY   := mips-n64-objcopy
 
-INCLUDE_DIRS += /usr/include/n64 /usr/include/n64/PR include $(BUILD_DIR) $(BUILD_DIR)/include src
+INCLUDE_SYSTEM_DIRS += /usr/include/n64 /usr/include/n64/PR
+INCLUDE_DIRS += include $(BUILD_DIR) $(BUILD_DIR)/include src
 
+C_INCLUDES := $(foreach i,$(INCLUDE_DIRS),-I$(i)) $(foreach i,$(INCLUDE_SYSTEM_DIRS),-isystem$(i))
 C_DEFINES := $(foreach d,$(DEFINES),-D$(d))
-DEF_INC_CFLAGS := $(foreach i,$(INCLUDE_DIRS),-I$(i)) $(C_DEFINES)
+DEF_INC_CFLAGS := $(C_INCLUDES) $(C_DEFINES)
 
 CFLAGS = -Wall -mno-check-zero-division -march=vr4300 -mtune=vr4300 -D_LANGUAGE_C -D_ULTRA64 -D__EXTENSIONS__ -fno-common -G0 -O2 -D_MIPS_SZLONG=32 -D_MIPS_SZINT=32 -g -mabi=32 -ffreestanding -mfix4300 $(DEF_INC_CFLAGS)
-ASFLAGS     := -mno-check-zero-division -march=vr4300 -mabi=32 $(foreach i,$(INCLUDE_DIRS),-I$(i))
+ASFLAGS     := -mno-check-zero-division -march=vr4300 -mabi=32 $(C_INCLUDES)
 # $(foreach d,$(DEFINES),--defsym $(d))
 
 # C preprocessor flags
