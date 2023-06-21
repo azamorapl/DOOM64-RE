@@ -1,19 +1,17 @@
-# Code
-/doom64/*.o
-/doom64/*.out
-/doom64/Tools/dm64ex
-# Assets
+*.o
+*.out
+/**/build/
+!doom64/WESSLIB.o
+
 *.wad
 *.wsd
 *.wdd
 *.wmd
-
+*.wad.bak
+*.pak
 *.n64
 *.z64
 
-!doom64/WESSLIB.o
-
-/doom64/UNDME00.SRB
-/doom64/UNDME00.SRB.txt
-*.pak
-*.wad.bak
+.vscode
+.idea
+*.iml

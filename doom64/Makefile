@@ -1,168 +1,147 @@
-#!smake
-include $(ROOT)/usr/include/make/PRdefs
+# Makefile to build doom64
 
-ifndef FINAL
-FINAL = YES
+TARGET_STRING := doom64
+TARGET := $(TARGET_STRING)
+
+# Preprocessor definitions
+DEFINES := _FINALROM=1 NDEBUG=1 F3DEX_GBI_2=1
+
+SRC_DIRS :=
+
+# Whether to hide commands or not
+VERBOSE ?= 1
+ifeq ($(VERBOSE),0)
+  V := @
 endif
 
-ifndef LOCAL
-LOCAL = USA
+# Whether to colorize build messages
+COLOR ?= 1
+
+#==============================================================================#
+# Target Executable and Sources                                                #
+#==============================================================================#
+# BUILD_DIR is the location where all build artifacts are placed
+BUILD_DIR := build
+ROM            := $(BUILD_DIR)/$(TARGET_STRING).z64
+ELF            := $(BUILD_DIR)/$(TARGET_STRING).elf
+LD_SCRIPT      := $(TARGET_STRING).ld
+BOOT		:= /usr/lib/n64/PR/bootcode/boot.6102
+BOOT_OBJ	:= $(BUILD_DIR)/boot.6102.o
+
+# Directories containing source files
+SRC_DIRS += src asm
+
+C_FILES           := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c))
+S_FILES           := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.s))
+
+# Object files
+O_FILES := $(foreach file,$(C_FILES),$(BUILD_DIR)/$(file:.c=.o)) \
+           $(foreach file,$(S_FILES),$(BUILD_DIR)/$(file:.s=.o)) \
+		   $(WESS_OBJ) \
+		   $(BOOT_OBJ)
+
+# Automatic dependency files
+DEP_FILES := $(O_FILES:.o=.d) $(ASM_O_FILES:.o=.d)  $(BUILD_DIR)/$(LD_SCRIPT).d
+
+#==============================================================================#
+# Compiler Options                                                             #
+#==============================================================================#
+
+AS        := mips-n64-as
+CC        := mips-n64-gcc
+CPP       := cpp
+LD        := mips-n64-ld
+AR        := mips-n64-ar
+OBJDUMP   := mips-n64-objdump
+OBJCOPY   := mips-n64-objcopy
+
+INCLUDE_DIRS += /usr/include/n64 /usr/include/n64/PR include $(BUILD_DIR) $(BUILD_DIR)/include src
+
+C_DEFINES := $(foreach d,$(DEFINES),-D$(d))
+DEF_INC_CFLAGS := $(foreach i,$(INCLUDE_DIRS),-I$(i)) $(C_DEFINES)
+
+CFLAGS = -Wall -mno-check-zero-division -march=vr4300 -mtune=vr4300 -D_LANGUAGE_C -D_ULTRA64 -D__EXTENSIONS__ -fno-common -G0 -O2 -D_MIPS_SZLONG=32 -D_MIPS_SZINT=32 -g -mabi=32 -ffreestanding -mfix4300 $(DEF_INC_CFLAGS)
+ASFLAGS     := -mno-check-zero-division -march=vr4300 -mabi=32 $(foreach i,$(INCLUDE_DIRS),-I$(i))
+# $(foreach d,$(DEFINES),--defsym $(d))
+
+# C preprocessor flags
+CPPFLAGS := -P -Wno-trigraphs $(DEF_INC_CFLAGS)
+
+# tools
+PRINT = printf
+
+ifeq ($(COLOR),1)
+NO_COL  := \033[0m
+RED     := \033[0;31m
+GREEN   := \033[0;32m
+BLUE    := \033[0;34m
+YELLOW  := \033[0;33m
+BLINK   := \033[33;5m
 endif
 
-ifeq ($(FINAL), YES)
-	OPTIMIZER       = -O3
-	LCDEFS          = -DNDEBUG -D_FINALROM -DF3DEX_GBI_2
-ifeq ($(PLATFORM), BB)
-	N64LIB          = -lultra_rom
-else
-	N64LIB          = -lgultra_rom
-endif
-else
-	OPTIMIZER       = -g3
-	LCDEFS          = -DF3DEX2_GBI_2 -DDEBUG
-ifeq ($(PLATFORM), BB)
-	N64LIB          = -lultra_d
-else
-	N64LIB          = -lgultra_d
-endif
-endif
+# Common build print status function
+define print
+  @$(PRINT) "$(GREEN)$(1) $(YELLOW)$(2)$(GREEN) -> $(BLUE)$(3)$(NO_COL)\n"
+endef
 
-ifeq ($(LOCAL), USA)
-MASTER = UNDME00.SRB
-SRBTXT = Doom64
-endif
+#==============================================================================#
+# Main Targets                                                                 #
+#==============================================================================#
 
-APP	=	doom64.out
+# Default target
+default: $(ROM)
 
-TARGETS	=	doom64.n64
+clean:
+	$(RM) -r $(BUILD_DIR)
 
-ASMFILES   =	wessint_s.s
-#m_fixed_s.s
+ALL_DIRS := $(BUILD_DIR) $(addprefix $(BUILD_DIR)/,$(SRC_DIRS))
 
-CODEFILES   =	graph.c asci.c \
-				doominfo.c \
-				sprinfo.c \
-				m_bbox.c \
-				am_main.c \
-				doomlib.c \
-				vsprintf.c \
-				c_convert.c \
-				d_main.c \
-				f_main.c \
-				g_game.c \
-				in_main.c \
-				m_fixed.c \
-				i_main.c \
-				m_main.c \
-				m_password.c \
-				p_base.c \
-				p_misc.c \
-				p_telept.c \
-				p_ceilng.c \
-				p_change.c \
-				p_doors.c \
-				p_enemy.c \
-				p_floor.c \
-				p_inter.c \
-				p_lights.c \
-				p_map.c \
-				p_slide.c \
-				p_shoot.c \
-				p_maputl.c \
-				p_mobj.c \
-				p_move.c \
-				p_plats.c \
-				p_pspr.c \
-				p_setup.c \
-				p_sight.c \
-				p_spec.c \
-				p_macros.c \
-				p_switch.c \
-				p_tick.c \
-				p_user.c \
-				r_data.c \
-				r_main.c \
-				r_phase1.c \
-				r_phase2.c \
-				r_phase3.c \
-				s_sound.c \
-				st_main.c \
-				d_screens.c \
-				w_wad.c \
-				z_zone.c \
-				decodes.c \
-				tables.c \
-				audio.c \
-				wessshell.c \
-				wesstwek.c \
-				wessapi.c \
-				wessapic.c \
-				wessapim.c \
-				wessapip.c \
-				wessapit.c \
-				wesshand.c \
-				wesstrak.c \
-				wessedit.c \
-				wessarc.c \
-				funqueue.c \
-				wessfade.c \
-				wessseq.c \
-				n64cmd.c \
-				seqload.c \
-				seqloadl.c \
-				seqloadr.c
+# Make sure build directory exists before compiling anything
+DUMMY != mkdir -p $(ALL_DIRS)
 
-WESSLIB   =	#wesslib.o
+#==============================================================================#
+# Compilation Recipes                                                          #
+#==============================================================================#
 
-CODEOBJECTS =	$(CODEFILES:.c=.o) $(ASMFILES:.s=.o) $(WESSLIB)
+# Compile C code
+$(BUILD_DIR)/%.o: %.c
+	$(call print,Compiling:,$<,$@)
+	$(V)$(CC) -c $(CFLAGS) -MMD -MF $(BUILD_DIR)/$*.d  -o $@ $<
+$(BUILD_DIR)/%.o: $(BUILD_DIR)/%.c
+	$(call print,Compiling:,$<,$@)
+	$(V)$(CC) -c $(CFLAGS) -MMD -MF $(BUILD_DIR)/$*.d  -o $@ $<
 
-DATAFILES   =	mem_heap.c audio_heap.c cfb.c
+# Assemble assembly code
+$(BUILD_DIR)/%.o: %.s
+	$(call print,Assembling:,$<,$@)
+	$(V)$(CC) -c $(ASFLAGS) $(foreach i,$(INCLUDE_DIRS),-Wa,-I$(i)) -x assembler-with-cpp -MMD -MF $(BUILD_DIR)/$*.d  -o $@ $<
 
-DATAOBJECTS =	$(DATAFILES:.c=.o)
+# Run linker script through the C preprocessor
+$(BUILD_DIR)/$(LD_SCRIPT): $(LD_SCRIPT)
+	$(call print,Preprocessing linker script:,$<,$@)
+	$(V)$(CPP) $(CPPFLAGS) -DBUILD_DIR=$(BUILD_DIR) -MMD -MP -MT $@ -MF $@.d -o $@ $<
 
-CODESEGMENT =	codesegment.o
+$(BOOT_OBJ): $(BOOT)
+	$(V)$(OBJCOPY) -I binary -B mips -O elf32-bigmips $< $@
 
-OBJECTS =	$(CODESEGMENT) $(DATAOBJECTS)
+# Link final ELF file
+$(ELF): $(O_FILES) $(BUILD_DIR)/$(LD_SCRIPT)
+	@$(PRINT) "$(GREEN)Linking ELF file:  $(BLUE)$@ $(NO_COL)\n"
+	$(V)$(LD) -L $(BUILD_DIR) -T $(BUILD_DIR)/$(LD_SCRIPT) -Map $(BUILD_DIR)/$(TARGET).map -o $@ $(O_FILES) --no-check-sections -L/usr/lib/n64 -lultra_rom -L$(N64_LIBGCCDIR) -lgcc
 
-LCINCS =	-I. -I$(ROOT)/usr/include/PR
+# Build ROM
+$(ROM): $(ELF)
+	$(call print,Building ROM:,$<,$@)
+	$(V)$(OBJCOPY) --pad-to=0x100000 --gap-fill=0xFF $< $@ -O binary
+	$(V)makemask $@
 
-LDIRT  =	$(APP)
+.PHONY: clean default
+# with no prerequisites, .SECONDARY causes no intermediate target to be removed
+.SECONDARY:
 
-PATH_PRINC =	$(ROOT)/usr/include/PR
-PATH_PRLIB =	$(ROOT)/usr/lib/PR
-PATH_INC	=	$(ROOT)/usr/include
+# Remove built-in rules, to improve performance
+MAKEFLAGS += --no-builtin-rules
 
-LCOPTS	=	-G 0
-LDFLAGS	=	-L$(ROOT)/usr/lib $(N64LIB)
-ASFLAGS	=	-non_shared -g -I$(PATH_PRINC) -I$(PATH_INC)
+-include $(DEP_FILES)
 
-ifeq ($(PLATFORM), BB)
-LCOPTS	+=	-mips2
-LDFLAGS	+=	-lgcc
-ASFLAGS	+=	-mips2
-default:	$(TARGETS)
-else
-LDFLAGS	+=	-L$(GCCDIR)/mipse/lib -lkmc
-ASFLAGS	+=	-mips3
-default:	$(MASTER)
-endif
-
-include $(COMMONRULES)
-
-$(CODESEGMENT):	$(CODEOBJECTS)
-		$(LD) -o $(CODESEGMENT) -r $(CODEOBJECTS) $(LDFLAGS)
-
-$(TARGETS) $(APP):	spec $(OBJECTS)
-ifeq ($(FINAL), YES)
-	$(MAKEROM) -s 64 -r $(TARGETS) spec
-	makemask $(TARGETS)
-else
-	$(MAKEROM) -r $(TARGETS) spec
-endif
-
-$(MASTER): $(TARGETS)
-	@copy $(TARGETS) $(MASTER)
-	@Tools\nrdc -p -d -c -t"$(SRBTXT)" $(MASTER)>$(MASTER).txt
-	@copy $(MASTER).txt con
-	@del $(MASTER).z64
-	@ren $(MASTER) $(MASTER).z64
+print-% : ; $(info $* is a $(flavor $*) variable set to [$($*)]) @true
