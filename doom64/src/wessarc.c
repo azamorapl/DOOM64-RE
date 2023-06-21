@@ -74,7 +74,7 @@ void wess_set_decomp_callback(WessDecompCallbackProc decompcall) // 800352C8
 int wess_decomp(unsigned char decomp_type,
 	char          *fileref,
 	unsigned long file_offset,
-	char          *ramdest,
+	unsigned char          *ramdest,
 	unsigned long uncompressed_size) // 800352D4
 {
 	if (wessdecomp != 0)

@@ -250,7 +250,7 @@ int wess_size_module(char *wmd_filename) // 8002F770
 	module_close(fp_wmd_file);
 
 	size = 8;//start Align 8
-	pm_stat->ppat_info->ppat_data = (char *)size;
+	pm_stat->ppat_info->ppat_data = (unsigned char *)size;
 	size += pm_stat->pmod_info->mod_hdr.data_size;
 
 	pm_stat->pseqstattbl = (sequence_status *)size;
@@ -477,7 +477,7 @@ int wess_load_module(char *wmd_filename,
 	and update the pm_stat->ppat_info pointer.
 	*/
 
-	pm_stat->ppat_info->ppat_data = (char*)(patch_group_data *)pmem;
+	pm_stat->ppat_info->ppat_data = (unsigned char*)(patch_group_data *)pmem;
 	pmem += pm_stat->pmod_info->mod_hdr.data_size;
 
 	if (pm_stat->pmod_info->mod_hdr.decomp_type)

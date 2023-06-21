@@ -37,7 +37,7 @@ extern void trackstart(track_status *ptmp, sequence_status *psq_stat);
 extern void Eng_SeqEnd (track_status *ptk_stat);
 extern int wess_handle_getposition(int handle);
 
-char scratch_area[32];//800B41E0
+unsigned char scratch_area[32];//800B41E0
 
 void tracksetspecial(track_status *ptmp, TriggerPlayAttr *attr); // 8003429C
 void trackgetspecial(track_status *ptmp, TriggerPlayAttr *attr); // 80034508
@@ -494,7 +494,7 @@ void wess_handle_resetposition(int handle) // 800337B0
 	return;
 }
 
-int wess_track_gotoposition(track_status *ptmp, int position, char *ppos) // 800338F0
+int wess_track_gotoposition(track_status *ptmp, int position, unsigned char *ppos) // 800338F0
 {
 	int deltatime;
 	int status;
@@ -576,7 +576,7 @@ int wess_track_gotoposition(track_status *ptmp, int position, char *ppos) // 800
 	return ptmp->totppi;
 }
 
-int wess_track_setposition(track_status *ptmp, int position, char *ppos) // 80033B24
+int wess_track_setposition(track_status *ptmp, int position, unsigned char *ppos) // 80033B24
 {
 	int deltatime;
 	int accppi;
@@ -663,7 +663,7 @@ int wess_handle_advposition(int handle, int position) // 80033D58
 {
 	sequence_status *psq_stat;
 	track_status *ptmp;
-	char ppos[12];
+	unsigned char ppos[12];
 
 	int li, lj;
 	char *lpdest;
@@ -708,7 +708,7 @@ int wess_handle_setposition(int handle, int position) // 80033EB8
 {
 	sequence_status *psq_stat;
 	track_status *ptmp;
-	char ppos[12];
+	unsigned char ppos[12];
 
 	int li, lj;
 	char *lpdest;
@@ -829,7 +829,7 @@ void pan_mod_action(track_status *ptmp, int pan_cntr) // 80034200
 
 void wess_track_parm_mod(track_status *ptmp, int value, WessAction funcion) // 80034258
 {
-	char *ppos;
+	unsigned char *ppos;
 
 	//save
 	ppos = ptmp->ppos;

@@ -49,8 +49,8 @@ void wess_seq_trigger_type_special(int seq_num, unsigned long seq_type, TriggerP
 void updatetrackstat(track_status *ptk_stat, TriggerPlayAttr *attr) // 800321FC
 {
 	int tempmask;
-	char *temp;
-	char tmpppos[4];
+	unsigned char *temp;
+	unsigned char tmpppos[4];
 
 	if ((attr == NULL) || (!attr->mask))
 		return;

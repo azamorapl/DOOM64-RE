@@ -67,9 +67,9 @@ void queue_wess_master_sfx_vol_set(char volume) // 800311FC
 	sequence_status *psq_stat;
 	track_status *ptmp;
 	char *lpdest;
-	char *ppos;
+	unsigned char *ppos;
 	int li, lj;
-	char tmpppos[16];
+	unsigned char tmpppos[16];
 
 	char _volume;
 
@@ -164,9 +164,9 @@ void queue_wess_master_mus_vol_set(char volume) // 80031448
 	sequence_status *psq_stat;
 	track_status *ptmp;
 	char *lpdest;
-	char *ppos;
+	unsigned char *ppos;
 	int li, lj;
-	char tmpppos[16];
+	unsigned char tmpppos[16];
 
 	char _volume;
 

@@ -9,7 +9,7 @@
 extern void (**CmdFuncArr[10])(track_status *);
 extern void(*DrvFunctions[36])(track_status *);
 
-char *Read_Vlq(char *pstart, void *deltatime);
+unsigned char *Read_Vlq(unsigned char *pstart, void *deltatime);
 char *Write_Vlq(char *dest, unsigned int value);
 int Len_Vlq(unsigned int value);
 
@@ -115,7 +115,7 @@ unsigned char CmdSort[44] = { // 8005DA14
 //extern unsigned int data01;    //L8007F024
 //extern unsigned char data02;    //L8007F028
 
-char *Read_Vlq(char *pstart, void *deltatime)//L80035F80()
+unsigned char *Read_Vlq(unsigned char *pstart, void *deltatime)//L80035F80()
 {
 	static int v;//800B6630
 	static char c;//800B6634
@@ -409,7 +409,7 @@ void Eng_StatusMark (track_status *ptk_stat) // 80036364
 void Eng_GateJump (track_status *ptk_stat) // 80036488
 {
 	static short lindex;	//800B6650
-	static char *laboff;	//800B6654
+	static unsigned char *laboff;	//800B6654
 	static char *pgate;		//800B6658
 
 	//PRINTF_D2(WHITE,0,10,"Eng_GateJump");
@@ -440,7 +440,7 @@ void Eng_GateJump (track_status *ptk_stat) // 80036488
 void Eng_IterJump (track_status *ptk_stat) // 80036568
 {
 	static short lindex;	//800B665C
-	static char	*laboff;	//800B6660
+	static unsigned char	*laboff;	//800B6660
 	static char	*piter;		//800B6664
 
 	//PRINTF_D2(WHITE,0,10,"Eng_IterJump");
@@ -560,7 +560,7 @@ void Eng_SeqGosub (track_status *ptk_stat) // 800369C8
 {
 	static short			lindex;			//800B668C
 	static unsigned short	ntracks;		//800B668E
-	static char				*laboff;		//800B6690
+	static unsigned char				*laboff;		//800B6690
 	static unsigned char	nactive;		//800B6694
 	static unsigned char	*ptindxs;		//800B6698
 	static track_status		*ptstemp;		//800B669C
@@ -601,7 +601,7 @@ void Eng_SeqJump (track_status *ptk_stat) // 80036B80
 {
 	static short			lindex;			//800B66A4
 	static unsigned short	ntracks;		//800B66A6
-	static char				*laboff;		//800B66A8
+	static unsigned char				*laboff;		//800B66A8
 	static unsigned char	nactive;		//800B66AC
 	static unsigned char	*ptindxs;		//800B66B0
 	static track_status		*ptstemp;		//800B66B4
@@ -812,7 +812,7 @@ void SeqEngine(void) // 800373AC
 	static track_status		*pts;	//800B66E0
 	static unsigned char	na;		//800B66E4
 	static unsigned int		ni;		//800B66E8
-	static char				*nn;	//800B66EC
+	static unsigned char				*nn;	//800B66EC
 
 	//PRINTF_D2(WHITE,0,9,"SeqEngine %d\n",SeqOn);
 
