@@ -74,47 +74,57 @@ u64 gfx_yield_buff[SYS_YIELD_SIZE];     // 800919E0
 OSTask vid_rsptask[2] = // 8005A590
 {
     {
-        M_GFXTASK,                          /* task type */
-        NULL,                               /* task flags */
-        (u64*) rspbootTextStart,            /* boot ucode pointer (fill in later) */
-        0,                                  /* boot ucode size (fill in later) */
-        (u64*) gspF3DEX2_NoN_fifoTextStart,  /* task ucode pointer (fill in later) */
-        SP_UCODE_SIZE,                      /* task ucode size */
-        (u64*) gspF3DEX2_NoN_fifoDataStart,  /* task ucode data pointer (fill in later) */
-        SP_UCODE_DATA_SIZE,                 /* task ucode data size */
-        &sys_rcp_stack[0],                  /* task dram stack pointer */
-        SP_DRAM_STACK_SIZE8,                /* task dram stack size */
-        &fifo_buff[0][0],                   /* task fifo buffer start ptr */
-        &fifo_buff[0][0]+SYS_FIFO_SIZE,     /* task fifo buffer end ptr */
-        NULL,                               /* task data pointer (fill in later) */
-        0,                                  /* task data size (fill in later) */
-        &gfx_yield_buff[0],                 /* task yield buffer ptr (not used here) */
-        SYS_YIELD_SIZE                      /* task yield buffer size (not used here) */
+        {
+            M_GFXTASK,                          /* task type */
+            NULL,                               /* task flags */
+            (u64*) rspbootTextStart,            /* boot ucode pointer (fill in later) */
+            0,                                  /* boot ucode size (fill in later) */
+            (u64*) gspF3DEX2_NoN_fifoTextStart,  /* task ucode pointer (fill in later) */
+            SP_UCODE_SIZE,                      /* task ucode size */
+            (u64*) gspF3DEX2_NoN_fifoDataStart,  /* task ucode data pointer (fill in later) */
+            SP_UCODE_DATA_SIZE,                 /* task ucode data size */
+            &sys_rcp_stack[0],                  /* task dram stack pointer */
+            SP_DRAM_STACK_SIZE8,                /* task dram stack size */
+            &fifo_buff[0][0],                   /* task fifo buffer start ptr */
+            &fifo_buff[0][0]+SYS_FIFO_SIZE,     /* task fifo buffer end ptr */
+            NULL,                               /* task data pointer (fill in later) */
+            0,                                  /* task data size (fill in later) */
+            &gfx_yield_buff[0],                 /* task yield buffer ptr (not used here) */
+            SYS_YIELD_SIZE                      /* task yield buffer size (not used here) */
+        }
     },
     {
-        M_GFXTASK,                          /* task type */
-        NULL,                               /* task flags */
-        (u64*) rspbootTextStart,            /* boot ucode pointer (fill in later) */
-        0,                                  /* boot ucode size (fill in later) */
-        (u64*) gspF3DEX2_NoN_fifoTextStart,  /* task ucode pointer (fill in later) */
-        SP_UCODE_SIZE,                      /* task ucode size */
-        (u64*) gspF3DEX2_NoN_fifoDataStart,  /* task ucode data pointer (fill in later) */
-        SP_UCODE_DATA_SIZE,                 /* task ucode data size */
-        &sys_rcp_stack[0],                  /* task dram stack pointer */
-        SP_DRAM_STACK_SIZE8,                /* task dram stack size */
-        &fifo_buff[1][0],                   /* task fifo buffer start ptr */
-        &fifo_buff[1][0]+SYS_FIFO_SIZE,     /* task fifo buffer end ptr */
-        NULL,                               /* task data pointer (fill in later) */
-        0,                                  /* task data size (fill in later) */
-        &gfx_yield_buff[0],                 /* task yield buffer ptr (not used here) */
-        SYS_YIELD_SIZE                      /* task yield buffer size (not used here) */
+        {
+            M_GFXTASK,                          /* task type */
+            NULL,                               /* task flags */
+            (u64*) rspbootTextStart,            /* boot ucode pointer (fill in later) */
+            0,                                  /* boot ucode size (fill in later) */
+            (u64*) gspF3DEX2_NoN_fifoTextStart,  /* task ucode pointer (fill in later) */
+            SP_UCODE_SIZE,                      /* task ucode size */
+            (u64*) gspF3DEX2_NoN_fifoDataStart,  /* task ucode data pointer (fill in later) */
+            SP_UCODE_DATA_SIZE,                 /* task ucode data size */
+            &sys_rcp_stack[0],                  /* task dram stack pointer */
+            SP_DRAM_STACK_SIZE8,                /* task dram stack size */
+            &fifo_buff[1][0],                   /* task fifo buffer start ptr */
+            &fifo_buff[1][0]+SYS_FIFO_SIZE,     /* task fifo buffer end ptr */
+            NULL,                               /* task data pointer (fill in later) */
+            0,                                  /* task data size (fill in later) */
+            &gfx_yield_buff[0],                 /* task yield buffer ptr (not used here) */
+            SYS_YIELD_SIZE                      /* task yield buffer size (not used here) */
+        }
     }
 };
 
 Vp vid_viewport = // 8005A610
 {
-    SCREEN_WD*2, SCREEN_HT*2, G_MAXZ,   0,		/* scale */
-    SCREEN_WD*2, SCREEN_HT*2,      0,   0,		/* translate */
+    {
+        {
+            SCREEN_WD*2, SCREEN_HT*2, G_MAXZ,   0 /* scale */
+        },
+        {
+            SCREEN_WD*2, SCREEN_HT*2,      0,   0 /* translate */
+        },
+    }
 };
 
 OSMesgQueue romcopy_msgque; // 800A4F70
