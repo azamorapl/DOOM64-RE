@@ -378,18 +378,17 @@ void P_Stop (int exit) // 80021D58
     else
         I_WIPE_MeltScreen();
     
-    if (gamemap == 33)
+    if (gamemap == 33 && demoplayback && exit == ga_completed)
     {
         // wait until the music has finished playing.
         // before, it relied on exact map timing (see two conditions above).
         while (S_SoundStatus(MapInfo[gamemap].MusicSeq) == 1)
         {
-            ST_DebugPrint("Waiting");
+            //ST_DebugPrint("Waiting %d", exit);
         }
+        //ST_DebugPrint("Title Completed");
     }
-    else
-    {
-        S_StopAll();
-    }
+    S_StopAll();
+    //ST_DebugPrint("Stopped %d", exit);
 }
 
