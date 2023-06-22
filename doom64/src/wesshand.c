@@ -69,7 +69,7 @@ track_status *gethandletrk(int handle, int track) // 80032EE0
 		hindx = handle - 1;
 		if ((psq = (pm_stat->pseqstattbl + hindx))->flags & SEQ_HANDLE)
 		{
-			if (*(psq->ptrk_indxs + track) != 0xFF)
+			if ((unsigned char)(*(psq->ptrk_indxs + track)) != 0xFF)
 			{
 				if ((ptrk = pm_stat->ptrkstattbl + *(psq->ptrk_indxs + track))->flags & TRK_HANDLED)
 				{
@@ -123,7 +123,7 @@ void wess_handle_return(int handle) // 80033048
 	track_status *ptmp;
 
 	int li, lj;
-	char *lpdest;
+	unsigned char *lpdest;
 
 	int _handle;
 
@@ -142,7 +142,7 @@ void wess_handle_return(int handle) // 80033048
 		lj = pm_stat->max_trks_perseq;
 
 		/* *lpdest refers to an active track if not 0xFF */
-		lpdest = psq_stat->ptrk_indxs;
+		lpdest = (unsigned char *)(psq_stat->ptrk_indxs);
 		while (lj--)
 		{
 			if (*lpdest != 0xFF)
@@ -169,7 +169,7 @@ void wess_handle_play_special(int handle, TriggerPlayAttr *attr) // 80033180
 	track_status *ptmp;
 
 	int li, lj;
-	char *lpdest;
+	unsigned char *lpdest;
 
 	int _handle;
 	TriggerPlayAttr *_attr;
@@ -190,7 +190,7 @@ void wess_handle_play_special(int handle, TriggerPlayAttr *attr) // 80033180
 		lj = pm_stat->max_trks_perseq;
 
 		/* *lpdest refers to an active track if not 0xFF */
-		lpdest = psq_stat->ptrk_indxs;
+		lpdest = (unsigned char *)(psq_stat->ptrk_indxs);
 		while (lj--)
 		{
 			if (*lpdest != 0xFF)
@@ -264,7 +264,7 @@ void wess_handle_get_special(int handle, TriggerPlayAttr *attr) // 80033364
 	track_status *ptmp;
 
 	int li, lj;
-	char *lpdest;
+	unsigned char *lpdest;
 
 	int _handle;
 	TriggerPlayAttr *_attr;
@@ -285,7 +285,7 @@ void wess_handle_get_special(int handle, TriggerPlayAttr *attr) // 80033364
 		lj = pm_stat->max_trks_perseq;
 
 		/* *lpdest refers to an active track if not 0xFF */
-		lpdest = psq_stat->ptrk_indxs;
+		lpdest = (unsigned char *)(psq_stat->ptrk_indxs);
 		while (lj--)
 		{
 			if (*lpdest != 0xFF)
@@ -309,7 +309,7 @@ void wess_handle_set_special(int handle, TriggerPlayAttr *attr) // 80033454
 	track_status *ptmp;
 
 	int li, lj;
-	char *lpdest;
+	unsigned char *lpdest;
 
 	int _handle;
 	TriggerPlayAttr *_attr;
@@ -330,7 +330,7 @@ void wess_handle_set_special(int handle, TriggerPlayAttr *attr) // 80033454
 		lj = pm_stat->max_trks_perseq;
 
 		/* *lpdest refers to an active track if not 0xFF */
-		lpdest = psq_stat->ptrk_indxs;
+		lpdest = (unsigned char *)psq_stat->ptrk_indxs;
 		while (lj--)
 		{
 			if (*lpdest != 0xFF)
@@ -354,7 +354,7 @@ void wess_handle_stop(int handle) // 80033544
 	track_status *ptmp;
 
 	int li, lj;
-	char *lpdest;
+	unsigned char *lpdest;
 
 	int _handle;
 
@@ -373,7 +373,7 @@ void wess_handle_stop(int handle) // 80033544
 		lj = pm_stat->max_trks_perseq;
 
 		/* *lpdest refers to an active track if not 0xFF */
-		lpdest = psq_stat->ptrk_indxs;
+		lpdest = (unsigned char *)psq_stat->ptrk_indxs;
 		while (lj--)
 		{
 			if (*lpdest != 0xFF)
@@ -397,7 +397,7 @@ void wess_handle_fastsettempo(int handle, short tempo) // 80033658
 	track_status *ptmp;
 
 	int li, lj;
-	char *lpdest;
+	unsigned char *lpdest;
 	unsigned long ppi;
 
 	int _handle;
@@ -420,7 +420,7 @@ void wess_handle_fastsettempo(int handle, short tempo) // 80033658
 		lj = pm_stat->max_trks_perseq;
 
 		/* *lpdest refers to an active track if not 0xFF */
-		lpdest = psq_stat->ptrk_indxs;
+		lpdest = (unsigned char *)psq_stat->ptrk_indxs;
 		while (lj--)
 		{
 			if (*lpdest != 0xFF)
@@ -453,7 +453,7 @@ void wess_handle_resetposition(int handle) // 800337B0
 	track_status *ptmp;
 
 	int li, lj;
-	char *lpdest;
+	unsigned char *lpdest;
 
 	int _handle;
 
@@ -472,7 +472,7 @@ void wess_handle_resetposition(int handle) // 800337B0
 		lj = pm_stat->max_trks_perseq;
 
 		/* *lpdest refers to an active track if not 0xFF */
-		lpdest = psq_stat->ptrk_indxs;
+		lpdest = (unsigned char *)psq_stat->ptrk_indxs;
 		while (lj--)
 		{
 			if (*lpdest != 0xFF)
@@ -666,7 +666,7 @@ int wess_handle_advposition(int handle, int position) // 80033D58
 	unsigned char ppos[12];
 
 	int li, lj;
-	char *lpdest;
+	unsigned char *lpdest;
 
 	int _handle, _position;
 
@@ -686,7 +686,7 @@ int wess_handle_advposition(int handle, int position) // 80033D58
 		lj = pm_stat->max_trks_perseq;
 
 		/* *lpdest refers to an active track if not 0xFF */
-		lpdest = psq_stat->ptrk_indxs;
+		lpdest = (unsigned char *)psq_stat->ptrk_indxs;
 		while (lj--)
 		{
 			if (*lpdest != 0xFF)
@@ -711,7 +711,7 @@ int wess_handle_setposition(int handle, int position) // 80033EB8
 	unsigned char ppos[12];
 
 	int li, lj;
-	char *lpdest;
+	unsigned char *lpdest;
 
 	int _handle, _position;
 
@@ -731,7 +731,7 @@ int wess_handle_setposition(int handle, int position) // 80033EB8
 		lj = pm_stat->max_trks_perseq;
 
 		/* *lpdest refers to an active track if not 0xFF */
-		lpdest = psq_stat->ptrk_indxs;
+		lpdest = (unsigned char *)psq_stat->ptrk_indxs;
 		while (lj--)
 		{
 			if (*lpdest != 0xFF)
@@ -755,8 +755,8 @@ int wess_handle_getposition(int handle) // 80034010
 	track_status *ptmp;
 
 	int li, lj;
-	char *lpdest;
-	int position;
+	unsigned char *lpdest;
+	unsigned int position;
 
 	int _handle;
 
@@ -777,7 +777,7 @@ int wess_handle_getposition(int handle) // 80034010
 		lj = pm_stat->max_trks_perseq;
 
 		/* *lpdest refers to an active track if not 0xFF */
-		lpdest = psq_stat->ptrk_indxs;
+		lpdest = (unsigned char *)psq_stat->ptrk_indxs;
 		while (lj--)
 		{
 			if (*lpdest != 0xFF)

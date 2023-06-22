@@ -105,7 +105,7 @@ void queue_wess_seq_pause(int sequence_number, enum MuteFlag mflag) // 800317F8
 	char nt, na;
 	sequence_status *psq_stat;
 	track_status *ptmp;
-	char *lpdest;
+	unsigned char *lpdest;
 	int li, lj;
 
 	int _sequence_number;
@@ -141,7 +141,7 @@ void queue_wess_seq_pause(int sequence_number, enum MuteFlag mflag) // 800317F8
 						li = psq_stat->tracks_active;
 						lj = pm_stat->max_trks_perseq;
 						/* *lpdest refers to an active track if not 0xFF */
-						lpdest = psq_stat->ptrk_indxs;
+						lpdest = (unsigned char *)psq_stat->ptrk_indxs;
 						while (lj--)
 						{
 							if (*lpdest != 0xFF)
@@ -225,7 +225,7 @@ void queue_wess_seq_restart(int sequence_number) // 80031AAC
 	char nt, na;
 	sequence_status *psq_stat;
 	track_status *ptmp;
-	char *lpdest;
+	unsigned char *lpdest;
 	int li, lj;
 
 	int _sequence_number;
@@ -258,7 +258,7 @@ void queue_wess_seq_restart(int sequence_number) // 80031AAC
 						li = psq_stat->tracks_active;
 						lj = pm_stat->max_trks_perseq;
 						/* *lpdest refers to an active track if not 0xFF */
-						lpdest = psq_stat->ptrk_indxs;
+						lpdest = (unsigned char *)psq_stat->ptrk_indxs;
 						while (lj--)
 						{
 							if (*lpdest != 0xFF)
@@ -340,7 +340,7 @@ void queue_wess_seq_pauseall(enum MuteFlag mflag, int remember) // 80031D0C
 	char nt, na;
 	sequence_status *psq_stat;
 	track_status *ptmp;
-	char *lpdest;
+	unsigned char *lpdest;
 	int li, lj;
 
 	enum MuteFlag _mflag;
@@ -379,7 +379,7 @@ void queue_wess_seq_pauseall(enum MuteFlag mflag, int remember) // 80031D0C
 					li = psq_stat->tracks_active;
 					lj = pm_stat->max_trks_perseq;
 					/* *lpdest refers to an active track if not 0xFF */
-					lpdest = psq_stat->ptrk_indxs;
+					lpdest = (unsigned char *)psq_stat->ptrk_indxs;
 					while (lj--)
 					{
 						if (*lpdest != 0xFF)
@@ -467,7 +467,7 @@ void queue_wess_seq_restartall(enum VoiceRestartFlag restart_remembered_voices) 
 	char nt, na;
 	sequence_status *psq_stat;
 	track_status *ptmp;
-	char *lpdest;
+	unsigned char *lpdest;
 	int li, lj;
 
 	enum VoiceRestartFlag _restart_remembered_voices;
@@ -499,7 +499,7 @@ void queue_wess_seq_restartall(enum VoiceRestartFlag restart_remembered_voices) 
 					li = psq_stat->tracks_active;
 					lj = pm_stat->max_trks_perseq;
 					/* *lpdest refers to an active track if not 0xFF */
-					lpdest = psq_stat->ptrk_indxs;
+					lpdest = (unsigned char *)psq_stat->ptrk_indxs;
 					while (lj--)
 					{
 						if (*lpdest != 0xFF)

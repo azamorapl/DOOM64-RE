@@ -242,7 +242,7 @@ void Eng_DriverEntry3 (track_status *ptk_stat) // 80036114
 void Eng_TrkOff (track_status *ptk_stat) // 8003611C
 {
 	static sequence_status	*lpseq;	//800B6638
-	static char				*lpdest;//800B663C
+	static unsigned char				*lpdest;//800B663C
 	static unsigned long	lj;		//800B6640
 
 	//PRINTF_D2(WHITE,0,10,"Eng_TrkOff");
@@ -262,7 +262,7 @@ void Eng_TrkOff (track_status *ptk_stat) // 8003611C
 	if (!(ptk_stat->flags & TRK_HANDLED))
 	{
 		lj = pmsbase->max_trks_perseq;
-		lpdest = lpseq->ptrk_indxs;
+		lpdest = (unsigned char *)lpseq->ptrk_indxs;
 
 		while (lj--)
 		{
@@ -410,10 +410,10 @@ void Eng_GateJump (track_status *ptk_stat) // 80036488
 {
 	static short lindex;	//800B6650
 	static unsigned char *laboff;	//800B6654
-	static char *pgate;		//800B6658
+	static unsigned char *pgate;		//800B6658
 
 	//PRINTF_D2(WHITE,0,10,"Eng_GateJump");
-	pgate = (pssbase + ptk_stat->seq_owner)->pgates + *(ptk_stat->ppos + 1);
+	pgate = (unsigned char *)((pssbase + ptk_stat->seq_owner)->pgates + *(ptk_stat->ppos + 1));
 
 	if (*pgate != 0)
 	{
@@ -441,10 +441,10 @@ void Eng_IterJump (track_status *ptk_stat) // 80036568
 {
 	static short lindex;	//800B665C
 	static unsigned char	*laboff;	//800B6660
-	static char	*piter;		//800B6664
+	static unsigned char	*piter;		//800B6664
 
 	//PRINTF_D2(WHITE,0,10,"Eng_IterJump");
-	piter = (pssbase + ptk_stat->seq_owner)->piters + *(ptk_stat->ppos + 1);
+	piter = (unsigned char *)((pssbase + ptk_stat->seq_owner)->piters + *(ptk_stat->ppos + 1));
 
 	if (*piter != 0)
 	{
@@ -475,13 +475,13 @@ void Eng_IterJump (track_status *ptk_stat) // 80036568
 void Eng_ResetGates (track_status *ptk_stat) // 80036654
 {
 	static unsigned char	gi;		//800B6668
-	static char				*pgate;	//800B666C
+	static unsigned char				*pgate;	//800B666C
 
 	//PRINTF_D2(WHITE,0,10,"Eng_ResetGates");
 	if (*(ptk_stat->ppos + 1) == 0xff)
 	{
 		gi = wess_driver_gates;
-		pgate = (pssbase + ptk_stat->seq_owner)->pgates;
+		pgate = (unsigned char *)((pssbase + ptk_stat->seq_owner)->pgates);
 
 		while (gi--)
 		{
@@ -490,7 +490,7 @@ void Eng_ResetGates (track_status *ptk_stat) // 80036654
 	}
 	else
 	{
-		pgate = (pssbase + ptk_stat->seq_owner)->pgates + *(ptk_stat->ppos + 1);
+		pgate = (unsigned char *)((pssbase + ptk_stat->seq_owner)->pgates + *(ptk_stat->ppos + 1));
 		*pgate = 0xff;
 	}
 }
@@ -498,13 +498,13 @@ void Eng_ResetGates (track_status *ptk_stat) // 80036654
 void Eng_ResetIters (track_status *ptk_stat) // 80036720
 {
 	static unsigned char	ii;		//800B6670
-	static char				*piter;	//800B6674
+	static unsigned char				*piter;	//800B6674
 
 	//PRINTF_D2(WHITE,0,10,"Eng_ResetIters");
 	if (*(ptk_stat->ppos + 1) == 0xff)
 	{
 		ii = wess_driver_iters;
-		piter = (pssbase + ptk_stat->seq_owner)->piters;
+		piter = (unsigned char *)((pssbase + ptk_stat->seq_owner)->piters);
 
 		while (ii--)
 		{
@@ -513,7 +513,7 @@ void Eng_ResetIters (track_status *ptk_stat) // 80036720
 	}
 	else
 	{
-		piter = (pssbase + ptk_stat->seq_owner)->piters + *(ptk_stat->ppos + 1);
+		piter = (unsigned char *)((pssbase + ptk_stat->seq_owner)->piters + *(ptk_stat->ppos + 1));
 		*piter = 0xff;
 	}
 }
@@ -729,11 +729,11 @@ void Eng_TrkTempo (track_status *ptk_stat) // 800370D8
 
 void Eng_TrkGosub (track_status *ptk_stat) // 8003713C
 {
-	unsigned int position;
+	int position;
 
 	//PRINTF_D2(WHITE,0,10,"Eng_TrkGosub");
 
-	position = (unsigned int)(*(ptk_stat->ppos + 1) | (*(ptk_stat->ppos + 2) << 8));
+	position = (int)(*(ptk_stat->ppos + 1) | (*(ptk_stat->ppos + 2) << 8));
 	if ((position >= 0) && (position < ptk_stat->labellist_count))
 	{
 		ptk_stat->psp = (unsigned char*)ptk_stat->ppos + CmdLength[26];
@@ -746,11 +746,11 @@ void Eng_TrkGosub (track_status *ptk_stat) // 8003713C
 
 void Eng_TrkJump (track_status *ptk_stat) // 800371C4
 {
-	unsigned int position;
+	int position;
 
 	//PRINTF_D2(WHITE,0,10,"Eng_TrkJump");
 
-	position = (unsigned int)(*(ptk_stat->ppos + 1) | (*(ptk_stat->ppos + 2) << 8));
+	position = (int)(*(ptk_stat->ppos + 1) | (*(ptk_stat->ppos + 2) << 8));
 	if ((position >= 0) && (position < ptk_stat->labellist_count))
 	{
 		ptk_stat->ppos = ptk_stat->pstart + *(ptk_stat->plabellist + position);
