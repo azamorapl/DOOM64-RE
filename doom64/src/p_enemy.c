@@ -868,7 +868,8 @@ void A_SpidRefire (mobj_t *actor) // 80011CBC
 		return;
     }
 
-    if(--actor->extradata <= 0)
+	actor->extradata = ((char *)actor->extradata - 1);
+    if((int)actor->extradata <= 0)
     {
         P_SetMobjState(actor, actor->info->missilestate);
         actor->extradata = (int *)5;
