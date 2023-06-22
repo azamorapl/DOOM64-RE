@@ -911,8 +911,8 @@ void BufferedDrawSprite(int type, state_t *state, int rotframe, int color, int x
 
         if (((spriteN64_t*)data)->cmpsize & 1)
         {
-            paldata = W_CacheLumpNum(((mobjinfo[type].palette + lump) -
-                                    (((spriteN64_t*)data)->cmpsize >> 1)), PU_CACHE, dec_jag) + 8;
+            paldata = (byte *)(W_CacheLumpNum(((mobjinfo[type].palette + lump) -
+                                    (((spriteN64_t*)data)->cmpsize >> 1)), PU_CACHE, dec_jag)) + 8;
         }
         else
         {

@@ -933,8 +933,8 @@ void R_RenderThings(subsector_t *sub) // 80028248
 
                 if (((spriteN64_t*)data)->cmpsize & 1)
                 {
-                    paldata = W_CacheLumpNum((lump - (((spriteN64_t*)data)->cmpsize >> 1)) +
-                                             thing->info->palette, PU_CACHE, dec_jag) + 8;
+                    paldata = (byte *)(W_CacheLumpNum((lump - (((spriteN64_t*)data)->cmpsize >> 1)) +
+                                             thing->info->palette, PU_CACHE, dec_jag)) + 8;
                 }
                 else
                 {
