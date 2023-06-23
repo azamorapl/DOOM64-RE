@@ -129,10 +129,12 @@ typedef enum {
     SPR_PLAS,
     SPR_BFGG,
     SPR_LASR,
+    #if ENABLE_REMASTER_SPRITES == 1
     SPR_GBLD,
     SPR_WTIM,
     SPR_WEDI,
     SPR_WSTR,
+    #endif
     NUMSPRITES
 } spritenum_t;
 
@@ -935,6 +937,7 @@ typedef enum
     S_794,
     S_795,
     S_796,
+    #if ENABLE_REMASTER_SPRITES == 1
     S_797,
     S_798,
     S_799,
@@ -942,6 +945,7 @@ typedef enum
     S_801,
     S_802,
     S_803,
+    #endif
 	NUMSTATES
 } statenum_t;
 

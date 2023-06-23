@@ -172,8 +172,13 @@ menuitem_t Menu_ControlStick[3] = // 8005AA38
     {  6, 102, 150},    // Return
 };
 
+#if ENABLE_REMASTER_SPRITES == 1
 menuitem_t Menu_Display[9] = // 8005AA5C
+#else
+menuitem_t Menu_Display[7] = // 8005AA5C
+#endif
 {
+    #if ENABLE_REMASTER_SPRITES == 1
     {  9, 102, 40 },    // Brightness
     { 32, 102, 80 },    // Center Display
     { 33, 102, 100},    // Messages
@@ -183,6 +188,15 @@ menuitem_t Menu_Display[9] = // 8005AA5C
     { 57, 102, 180},    // Cross Color
     { 13, 102, 200},    // Default Display
     {  6, 102, 220},    // Return
+    #else
+    {  9, 102, 60 },    // Brightness
+    { 32, 102, 100 },   // Center Display
+    { 33, 102, 120},    // Messages
+    { 34, 102, 140},    // Status Bar
+    { 50, 102, 160},    // Filtering
+    { 13, 102, 180},    // Default Display
+    {  6, 102, 200},    // Return
+    #endif
 };
 
 menuitem_t Menu_Game[5] = // 8005AAA4
@@ -1002,7 +1016,11 @@ int M_MenuTicker(void) // 80007E0C
                         M_SaveMenuData();
 
                         MenuItem = Menu_Display;
+                        #if ENABLE_REMASTER_SPRITES == 1
                         itemlines = 9;
+                        #else
+                        itemlines = 7;
+                        #endif
                         MenuCall = M_DisplayDrawer;
                         cursorpos = 0;
 
@@ -2117,7 +2135,11 @@ void M_DisplayDrawer(void) // 80009884
 
     item = Menu_Display;
 
+    #if ENABLE_REMASTER_SPRITES == 1
     for(i = 0; i < 9; i++)
+    #else
+    for(i = 0; i < 7; i++)
+    #endif
     {
         casepos = item->casepos;
 
@@ -2178,8 +2200,13 @@ void M_DisplayDrawer(void) // 80009884
         item++;
     }
 
+    #if ENABLE_REMASTER_SPRITES == 1
     ST_DrawSymbol(102, 60, 68, text_alpha | 0xffffff00);
     ST_DrawSymbol(brightness + 103, 60, 69, text_alpha | 0xffffff00);
+    #else
+    ST_DrawSymbol(102, 80, 68, text_alpha | 0xffffff00);
+    ST_DrawSymbol(brightness + 103, 80, 69, text_alpha | 0xffffff00);
+    #endif
 
     ST_DrawSymbol(Menu_Display[0].x - 37, Menu_Display[cursorpos].y - 9, MenuAnimationTic + 70, text_alpha | 0xffffff00);
 }

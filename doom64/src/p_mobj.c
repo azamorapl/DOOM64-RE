@@ -100,7 +100,8 @@ extern boolean PB_CheckPosition(void);
 
 mobj_t *P_SpawnMapThing (mapthing_t *mthing) // 80018C24
 {
-	int			i, bit;
+	int			i;
+	int			bit = 0;
 	mobj_t		*mobj;
 	fixed_t		x,y,z;
 	mobj_t		tmp_mobj;
@@ -402,6 +403,7 @@ void P_SpawnBlood (fixed_t x, fixed_t y, fixed_t z, int damage) // 800192B8
         th->tics -= P_Random()&1;
         if (th->tics<1)
             th->tics = 1;
+		#if ENABLE_REMASTER_SPRITES == 1
         if (damage <= 12 && damage >= 9)
 		{
             P_SetMobjState (th, GreenBlood ? S_798 : S_495);
@@ -414,6 +416,16 @@ void P_SpawnBlood (fixed_t x, fixed_t y, fixed_t z, int damage) // 800192B8
 		{
 			P_SetMobjState (th, S_797);
 		}
+		#else
+		if (damage <= 12 && damage >= 9)
+		{
+            P_SetMobjState (th, S_495);
+		}
+        else if (damage < 9)
+		{
+            P_SetMobjState (th, S_496);
+		}
+		#endif
     }
 }
 
