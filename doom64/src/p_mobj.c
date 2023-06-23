@@ -455,15 +455,17 @@ mobj_t *P_SpawnMissile (mobj_t *source, mobj_t *dest, fixed_t xoffs, fixed_t yof
 		an += ((rnd2 - rnd1) << 20);
 	}
 
+
+    th->angle = an;
+    an >>= ANGLETOFINESHIFT;
+    speed = th->info->speed;
+
 	if (source && source->flags & MF_NIGHTMARE)
 	{
         th->flags |= MF_NIGHTMARE;
         speed *= 2;
     }
 
-    th->angle = an;
-    an >>= ANGLETOFINESHIFT;
-    speed = th->info->speed;
     th->momx = speed * finecosine[an];
     th->momy = speed * finesine[an];
 
