@@ -31,13 +31,13 @@ extern u32 cfb[2][SCREEN_WD*SCREEN_HT]; // 8036A000
 /* Fixes and Version Update Here*/
 
 // NEWS Updates
-#define ENABLE_NIGHTMARE    1       // Originally Activated in the project [GEC] Master Edition.
+//#define ENABLE_NIGHTMARE    1       // Originally Activated in the project [GEC] Master Edition.
 
 // FIXES
 #define FIX_LINEDEFS_DELETION   1   // Fixes for the 'linedef deletion' bug. From PsyDoom
 
-#define ENABLE_EXTRA_EPISODES	1
-#define ENABLE_REMASTER_SPRITES	1
+//#define ENABLE_EXTRA_EPISODES	1
+//#define ENABLE_REMASTER_SPRITES	1
 
 /*============================================================================= */
 
