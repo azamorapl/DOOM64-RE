@@ -291,6 +291,8 @@ static int textline;			// 800631F4
 static char **text;			    // 800631F8
 static int textalpha;			// 800631FC
 
+static boolean speed = false;
+
 /*
 =================
 =
@@ -330,6 +332,7 @@ void F_StartIntermission(void) // 80002CD0
     DrawerStatus = 2;
     textline = 0;
     textalpha = 0;
+    speed = false;
 }
 
 /*
@@ -370,9 +373,14 @@ int F_TickerIntermission(void) // 80002E44
 
 	    exit = ga_nothing;
 
+        if ((buttons != oldbuttons) && (buttons & ALL_BUTTONS))
+        {
+            speed = true;
+        }
+
         if(*text[textline])
         {
-            textalpha += 8;
+            textalpha += !speed ? 8 : 16;
             if (textalpha > 255)
             {
                 textalpha = 0;
@@ -464,6 +472,7 @@ void F_Start(void) // 8000313C
 	castonmelee = 0;
 	castrotation = 0;
 	castfadein = 0;
+    speed = false;
 
 	S_StartMusic(113);
 }
@@ -508,6 +517,11 @@ int F_Ticker(void) // 80003258
 		return gameaction;
 	}
 
+    if ((buttons != oldbuttons) && (buttons & ALL_BUTTONS))
+    {
+        speed = true;
+    }
+
     switch(finalestage)
     {
         case F_STAGE_FADEIN_BACKGROUD:
@@ -522,7 +536,7 @@ int F_Ticker(void) // 80003258
         case F_STAGE_DRAWTEXT:
             if (gamemap == 39 ? *endcluster7[textline] : *endcluster6[textline])
             {
-                textalpha += 8;
+                textalpha += !speed ? 8 : 16;
                 if (textalpha > 255)
                 {
                     textalpha = 0;
