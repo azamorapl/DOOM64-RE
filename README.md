@@ -6,7 +6,7 @@ Erick194's complete reverse engineering of Doom 64: [DOOM 64 RE](https://github.
 Molecicco's enhancements, additions, and bug fixes: [DOOM 64 CE](https://github.com/azamorapl/DOOM64-RE/tree/romhack)\
 JNMartin's update to modern SDK and optimizations: [DOOM 64 Merciless Edition](https://github.com/jnmartin84/Doom-64-Merciless-Edition/tree/modern)
 
-The focus of this project is to bring features from Nightdive's 2020 [Doom 64 remaster](https://doomwiki.org/wiki/Doom_64_(2020_version)) into the original game.
+The focus of this project is to combine the features of the aforementioned repositories to create a demo-compatible, modding-friendly, port with quality of life features.
 
 ## Building
 
