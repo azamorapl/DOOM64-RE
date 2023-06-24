@@ -518,7 +518,7 @@ void R_RenderSwitch(seg_t *seg, int texture, int topOffset, int color) // 800276
     vertex_t *v2;
     fixed_t x, y;
     fixed_t sin, cos;
-    int wshift, hshift;
+    int wshift = 5, hshift = 5;
 
     if (texture <= 1) return;
 
@@ -606,11 +606,11 @@ void R_RenderSwitch(seg_t *seg, int texture, int topOffset, int color) // 800276
 
     // texture s coordinates
     VTX1[0].v.tc[0] = VTX1[3].v.tc[0] = (0 << 6);
-    VTX1[1].v.tc[0] = VTX1[2].v.tc[0] = (32 << 6);
+    VTX1[1].v.tc[0] = VTX1[2].v.tc[0] = ((1 << wshift) << 6);
 
     // texture t coordinates
     VTX1[0].v.tc[1] = VTX1[1].v.tc[1] = (0 << 6);
-    VTX1[2].v.tc[1] = VTX1[3].v.tc[1] = (32 << 6);
+    VTX1[2].v.tc[1] = VTX1[3].v.tc[1] = ((1 << hshift) << 6);
 
     // vertex color
     *(int*)VTX1[0].v.cn = *(int*)VTX1[1].v.cn = *(int*)VTX1[2].v.cn = *(int*)VTX1[3].v.cn = color;

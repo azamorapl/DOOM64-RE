@@ -22,6 +22,7 @@ The focus of this project is to bring features from Nightdive's 2020 [Doom 64 re
   - Projectiles immediately explode if they are blocked when they spawn.
   - Passwords can be created for levels 0 and 1.
   - Things with editor numbers higher than 4096 are now allowed.
+  - Switch textures st coordinates now use the full width and height instead of being croppped to 32x32.
 - No demo desyncs.
 
 In addition, the following extra features were added:
