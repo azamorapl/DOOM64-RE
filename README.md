@@ -2,8 +2,8 @@
 
 Doom 64 XE (eXpanded Edition) is an interation of the Doom 64 Reverse Engineering source built upon three repositories:
 
-Erick194's complete reverse engineering of Doom 64: [DOOM 64 RE](https://github.com/Erick194/DOOM64-RE/)
-Molecicco's enhancements, additions, and bug fixes: [DOOM 64 CE](https://github.com/azamorapl/DOOM64-RE/tree/romhack)
+Erick194's complete reverse engineering of Doom 64: [DOOM 64 RE](https://github.com/Erick194/DOOM64-RE/)\
+Molecicco's enhancements, additions, and bug fixes: [DOOM 64 CE](https://github.com/azamorapl/DOOM64-RE/tree/romhack)\
 JNMartin's update to modern SDK and optimizations: [DOOM 64 Merciless Edition](https://github.com/jnmartin84/Doom-64-Merciless-Edition/tree/modern)
 
 The focus of this project is to bring features from Nightdive's 2020 [Doom 64 remaster](https://doomwiki.org/wiki/Doom_64_(2020_version)) into the original game.
