@@ -337,7 +337,7 @@ int ActualConfiguration[13] = // 8005A840
     PAD_L_TRIG, PAD_R_TRIG, PAD_A, PAD_B
 };
 
-int DefaultConfiguration[5][13] = // 8005A840
+int DefaultConfiguration[6][13] = // 8005A840
 {
     // Default 1
     {
@@ -384,6 +384,14 @@ int DefaultConfiguration[5][13] = // 8005A840
         PAD_A, PAD_RIGHT_C, PAD_UP_C, PAD_DOWN_C,
         PAD_Z_TRIG, PAD_L_TRIG, PAD_R_TRIG,
         PAD_B, PAD_LEFT_C
+    },
+
+    // Retro Fighter Controller
+    {
+        PAD_RIGHT, PAD_LEFT, PAD_UP_C, PAD_DOWN_C,
+        PAD_Z_TRIG,
+        PAD_B, PAD_A, PAD_UP, PAD_DOWN,
+        PAD_LEFT_C, PAD_RIGHT_C, PAD_L_TRIG, PAD_R_TRIG
     }
 };
 
@@ -3112,7 +3120,7 @@ int M_ControlPadTicker(void) // 8000B694
                     if (buttons & (PAD_DOWN|PAD_RIGHT|ALL_BUTTONS))
                     {
                         ConfgNumb += 1;
-                        if(ConfgNumb > 4)
+                        if(ConfgNumb > 5)
                             ConfgNumb = 0;
                     }
                 }
@@ -3120,7 +3128,7 @@ int M_ControlPadTicker(void) // 8000B694
                 {
                     ConfgNumb -= 1;
                     if (ConfgNumb < 0)
-                        ConfgNumb = 4;
+                        ConfgNumb = 5;
                 }
 
                 if ((buttons & (ALL_BUTTONS|ALL_JPAD)) != 0)
