@@ -323,7 +323,7 @@ int M_SENSITIVITY = 0;          // 8005A7CC
 boolean FeaturesUnlocked = false; // 8005A7D0
 int TextureFilter = 0;
 int Autorun = 0;
-byte SavedConfig[13];
+byte SavedConfig[16];
 boolean GreenBlood;
 boolean BlueCross;
 boolean ShowStats;
@@ -408,21 +408,21 @@ void M_EncodeConfig(void)
     int i;
     int controlKey[13];
 
-    SavedConfig[0] = FeaturesUnlocked & 0x1;
-    SavedConfig[0] += (enable_messages & 0x1) << 1;
-    SavedConfig[0] += (enable_statusbar & 0x1) << 2;
-    SavedConfig[0] += (ConfgNumb & 0x7) << 3; //0-5
-    SavedConfig[0] += (GreenBlood & 0x1) << 6;
-    SavedConfig[0] += (BlueCross & 0x1) << 7;
+    SavedConfig[3] = FeaturesUnlocked & 0x1;
+    SavedConfig[3] += (enable_messages & 0x1) << 1;
+    SavedConfig[3] += (enable_statusbar & 0x1) << 2;
+    SavedConfig[3] += (ConfgNumb & 0x7) << 3; //0-5
+    SavedConfig[3] += (GreenBlood & 0x1) << 6;
+    SavedConfig[3] += (BlueCross & 0x1) << 7;
 
-    SavedConfig[1] = MusVolume & 0x7F; //0-100
+    SavedConfig[4] = MusVolume & 0x7F; //0-100
     
-    SavedConfig[2] = SfxVolume & 0x7F; //0-100
+    SavedConfig[5] = SfxVolume & 0x7F; //0-100
 
-    SavedConfig[3] = brightness & 0x7F; //0-100
+    SavedConfig[6] = brightness & 0x7F; //0-100
 
-    SavedConfig[4] = M_SENSITIVITY & 0x7F; //0-100
-    SavedConfig[4] += (ShowStats & 0x1) << 7;
+    SavedConfig[7] = M_SENSITIVITY & 0x7F; //0-100
+    SavedConfig[7] += (ShowStats & 0x1) << 7;
 
     for (i = 0; i < 13; i++)
     {
@@ -484,29 +484,29 @@ void M_EncodeConfig(void)
         }
     }
 
-    SavedConfig[5] = controlKey[0] & 0xF;
-    SavedConfig[5] += (controlKey[1] & 0xF) << 4;
+    SavedConfig[8] = controlKey[0] & 0xF;
+    SavedConfig[8] += (controlKey[1] & 0xF) << 4;
 
-    SavedConfig[6] = controlKey[2] & 0xF;
-    SavedConfig[6] += (controlKey[3] & 0xF) << 4;
+    SavedConfig[9] = controlKey[2] & 0xF;
+    SavedConfig[9] += (controlKey[3] & 0xF) << 4;
 
-    SavedConfig[7] = controlKey[4] & 0xF;
-    SavedConfig[7] += (controlKey[5] & 0xF) << 4;
+    SavedConfig[10] = controlKey[4] & 0xF;
+    SavedConfig[10] += (controlKey[5] & 0xF) << 4;
 
-    SavedConfig[8] = controlKey[6] & 0xF;
-    SavedConfig[8] += (controlKey[7] & 0xF) << 4;
+    SavedConfig[11] = controlKey[6] & 0xF;
+    SavedConfig[11] += (controlKey[7] & 0xF) << 4;
 
-    SavedConfig[9] = controlKey[8] & 0xF;
-    SavedConfig[9] += (controlKey[9] & 0xF) << 4;
+    SavedConfig[12] = controlKey[8] & 0xF;
+    SavedConfig[12] += (controlKey[9] & 0xF) << 4;
 
-    SavedConfig[10] = controlKey[10] & 0xF;
-    SavedConfig[10] += (controlKey[11] & 0xF) << 4;
+    SavedConfig[13] = controlKey[10] & 0xF;
+    SavedConfig[13] += (controlKey[11] & 0xF) << 4;
 
-    SavedConfig[11] = controlKey[12] & 0xF;
-    SavedConfig[11] += (TextureFilter & 0x3) << 4; //0-2
-    SavedConfig[11] += (Autorun & 0x3) << 6; //0-2
+    SavedConfig[14] = controlKey[12] & 0xF;
+    SavedConfig[14] += (TextureFilter & 0x3) << 4; //0-2
+    SavedConfig[14] += (Autorun & 0x3) << 6; //0-2
     
-    SavedConfig[12] = 0xCE; //valid save id
+    SavedConfig[15] = 0xCE; //valid save id
 }
 
 void M_DecodeConfig()
@@ -514,43 +514,43 @@ void M_DecodeConfig()
     int i;
     int controlKey[13];
 
-    if (SavedConfig[12] != 0xCE) return;
+    if (SavedConfig[15] != 0xCE) return;
 
-    FeaturesUnlocked = SavedConfig[0] & 0x1;
-    enable_messages = (SavedConfig[0] >> 1) & 0x1;
-    enable_statusbar = (SavedConfig[0] >> 2) & 0x1;
-    ConfgNumb = (SavedConfig[0] >> 3) & 0x7;
-    GreenBlood = (SavedConfig[0] >> 6) & 0x1;
-    BlueCross = (SavedConfig[0] >> 7) & 0x1;
+    FeaturesUnlocked = SavedConfig[3] & 0x1;
+    enable_messages = (SavedConfig[3] >> 1) & 0x1;
+    enable_statusbar = (SavedConfig[3] >> 2) & 0x1;
+    ConfgNumb = (SavedConfig[3] >> 3) & 0x7;
+    GreenBlood = (SavedConfig[3] >> 6) & 0x1;
+    BlueCross = (SavedConfig[3] >> 7) & 0x1;
 
-    MusVolume = SavedConfig[1] & 0x7F;
+    MusVolume = SavedConfig[4] & 0x7F;
 
-    SfxVolume = SavedConfig[2] & 0x7F;
+    SfxVolume = SavedConfig[5] & 0x7F;
 
-    brightness = SavedConfig[3] & 0x7F;
+    brightness = SavedConfig[6] & 0x7F;
 
-    M_SENSITIVITY = SavedConfig[4] & 0x7F;
-    ShowStats = (SavedConfig[4] >> 7) & 0x1;
+    M_SENSITIVITY = SavedConfig[7] & 0x7F;
+    ShowStats = (SavedConfig[7] >> 7) & 0x1;
 
-    controlKey[0] = SavedConfig[5] & 0xF;
-    controlKey[1] = (SavedConfig[5] >> 4) & 0xF;
+    controlKey[0] = SavedConfig[8] & 0xF;
+    controlKey[1] = (SavedConfig[8] >> 4) & 0xF;
     
-    controlKey[2] = SavedConfig[6] & 0xF;
-    controlKey[3] = (SavedConfig[6] >> 4) & 0xF;
+    controlKey[2] = SavedConfig[9] & 0xF;
+    controlKey[3] = (SavedConfig[9] >> 4) & 0xF;
 
-    controlKey[4] = SavedConfig[7] & 0xF;
-    controlKey[5] = (SavedConfig[7] >> 4) & 0xF;
+    controlKey[4] = SavedConfig[10] & 0xF;
+    controlKey[5] = (SavedConfig[10] >> 4) & 0xF;
 
-    controlKey[6] = SavedConfig[8] & 0xF;
-    controlKey[7] = (SavedConfig[8] >> 4) & 0xF;
+    controlKey[6] = SavedConfig[11] & 0xF;
+    controlKey[7] = (SavedConfig[11] >> 4) & 0xF;
 
-    controlKey[8] = SavedConfig[9] & 0xF;
-    controlKey[9] = (SavedConfig[9] >> 4) & 0xF;
+    controlKey[8] = SavedConfig[12] & 0xF;
+    controlKey[9] = (SavedConfig[12] >> 4) & 0xF;
 
-    controlKey[10] = SavedConfig[10] & 0xF;
-    controlKey[11] = (SavedConfig[10] >> 4) & 0xF;
+    controlKey[10] = SavedConfig[13] & 0xF;
+    controlKey[11] = (SavedConfig[13] >> 4) & 0xF;
 
-    controlKey[12] = SavedConfig[11] & 0xF;
+    controlKey[12] = SavedConfig[14] & 0xF;
 
     for (i = 0; i < 13; i++)
     {
@@ -612,8 +612,8 @@ void M_DecodeConfig()
         }
     }
 
-    TextureFilter = (SavedConfig[11] >> 4) & 0x3;
-    Autorun = (SavedConfig[11] >> 6) & 0x3;
+    TextureFilter = (SavedConfig[14] >> 4) & 0x3;
+    Autorun = (SavedConfig[14] >> 6) & 0x3;
 
     S_SetMusicVolume(MusVolume);
 	S_SetSoundVolume(SfxVolume);
@@ -2757,11 +2757,9 @@ int M_SavePakTicker(void) // 8000A804
     {
         if ((buttons != oldbuttons) && (buttons == (PAD_RIGHT_C|PAD_LEFT_C)))
         {
-            // save label data
-            sprintf((char *)&Pak_Data[cursorpos * 32], "%2.2d%.1d", nextmap, gameskill);
             // save configuration
             M_EncodeConfig();
-            D_memcpy(&Pak_Data[(cursorpos * 32) + 3], &SavedConfig, 13);
+            D_memcpy(&Pak_Data[cursorpos * 32], &SavedConfig, 16);
             // save the next password data in text format
             D_memcpy(&Pak_Data[(cursorpos * 32) + 16], &Passwordbuff, 16);
 
@@ -2791,7 +2789,8 @@ void M_SavePakDrawer(void) // 8000AB44
 {
     int i;
     char buffer[36];
-    char savedata[3];
+    byte savedata[16];
+    int leveltxt, skilltxt;
 
     I_ClearFrame();
 
@@ -2821,32 +2820,34 @@ void M_SavePakDrawer(void) // 8000AB44
     {
         for(i = linepos; i < (linepos + 6); i++)
         {
-            if (Pak_Data[i * 32] == 0) {
+            if (Pak_Data[(i * 32) + 16] == 0) {
                 D_memmove(buffer, "empty");
             }
             else {
-                D_memcpy(savedata, &Pak_Data[i * 32], 3);
-                switch ((int)(savedata[2] - '0'))
+                D_memcpy(savedata, &Pak_Data[(i * 32) + 16], 16);
+                leveltxt = skilltxt = 0;
+                M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, 0);
+                switch (skilltxt)
                 {
                     #if ENABLE_NIGHTMARE == 1
                     case 4:
-                        sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT19);
+                        sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT19);
                         break;
                     #endif
                     case 3:
-                        sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT18);
+                        sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT18);
                         break;
                     case 2:
-                        sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT17);
+                        sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT17);
                         break;
                     case 1:
-                        sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT16);
+                        sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT16);
                         break;
                     case 0:
-                        sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT15);
+                        sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT15);
                         break;
                     default:
-                        sprintf(buffer, "Level: %c%c Skill: %c", savedata[0], savedata[1], savedata[2]);
+                        sprintf(buffer, "Level: %02d Skill: %d", leveltxt, skilltxt);
                         break;
                 }
             }
@@ -2979,14 +2980,14 @@ int M_LoadPakTicker(void) // 8000AFE4
     if (!(buttons ^ oldbuttons) || !(buttons & PAD_START))
     {
         if (!(buttons ^ oldbuttons) || buttons != (PAD_RIGHT_C|PAD_LEFT_C) ||
-            (Pak_Data[cursorpos * 32] == 0))
+            (Pak_Data[(cursorpos * 32) + 16] == 0))
         {
             exit = ga_nothing;
         }
         else
         {
             // load configuration
-            D_memcpy(&SavedConfig, &Pak_Data[((cursorpos * 32) + 3)], 13);
+            D_memcpy(&SavedConfig, &Pak_Data[cursorpos * 32], 16);
             M_DecodeConfig();
             // load the password data in text format
             D_memcpy(&Passwordbuff, &Pak_Data[((cursorpos * 32) + 16)], 16);
@@ -3020,7 +3021,8 @@ void M_LoadPakDrawer(void) // 8000B270
 {
     int i;
     char buffer[32];
-    char savedata[3];
+    byte savedata[16];
+    int leveltxt, skilltxt;
 
     ST_DrawString(-1, 20, "Controller Pak", text_alpha | 0xc0000000);
 
@@ -3029,32 +3031,34 @@ void M_LoadPakDrawer(void) // 8000B270
         if (FilesUsed == -1) {
             D_memmove(buffer, "-");
         }
-        else if (Pak_Data[i * 32] == 0) {
+        else if (Pak_Data[(i * 32) + 16] == 0) {
             D_memmove(buffer, "no save");
         }
         else {
-            D_memcpy(savedata, &Pak_Data[i * 32], 3);
-            switch ((int)(savedata[2] - '0'))
+            D_memcpy(savedata, &Pak_Data[(i * 32) + 16], 16);
+            leveltxt = skilltxt = 0;
+            M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, 0);
+            switch (skilltxt)
             {
                 #if ENABLE_NIGHTMARE == 1
                 case 4:
-                    sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT19);
+                    sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT19);
                     break;
                 #endif
                 case 3:
-                    sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT18);
+                    sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT18);
                     break;
                 case 2:
-                    sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT17);
+                    sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT17);
                     break;
                 case 1:
-                    sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT16);
+                    sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT16);
                     break;
                 case 0:
-                    sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT15);
+                    sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT15);
                     break;
                 default:
-                    sprintf(buffer, "Level: %c%c Skill: %c", savedata[0], savedata[1], savedata[2]);
+                    sprintf(buffer, "Level: %02d Skill: %d", leveltxt, skilltxt);
                     break;
             }
         }
