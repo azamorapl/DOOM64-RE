@@ -173,24 +173,28 @@ menuitem_t Menu_ControlStick[3] = // 8005AA38
 };
 
 #if ENABLE_REMASTER_SPRITES == 1
-menuitem_t Menu_Display[9] = // 8005AA5C
+#define MAXDISPLAY 10
+menuitem_t Menu_Display[MAXDISPLAY] = // 8005AA5C
 #else
-menuitem_t Menu_Display[7] = // 8005AA5C
+#define MAXDISPLAY 8
+menuitem_t Menu_Display[MAXDISPLAY] = // 8005AA5C
 #endif
 {
     #if ENABLE_REMASTER_SPRITES == 1
-    {  9, 102, 40 },    // Brightness
-    { 32, 102, 80 },    // Center Display
-    { 33, 102, 100},    // Messages
-    { 34, 102, 120},    // Status Bar
-    { 50, 102, 140},    // Filtering
-    { 56, 102, 160},    // Blood Color
-    { 57, 102, 180},    // Cross Color
-    { 13, 102, 200},    // Default Display
-    {  6, 102, 220},    // Return
+    {  9, 102, 60 },    // Brightness
+    { -1, 102, 80 },    // Brightness Slider
+    { 32, 102, 100},    // Center Display
+    { 33, 102, 120},    // Messages
+    { 34, 102, 140},    // Status Bar
+    { 50, 102, 160},    // Filtering
+    { 56, 102, 180},    // Blood Color
+    { 57, 102, 200},    // Cross Color
+    { 13, 102, 220},    // Default Display
+    {  6, 102, 240},    // Return
     #else
     {  9, 102, 60 },    // Brightness
-    { 32, 102, 100 },   // Center Display
+    { -1, 102, 80 },    // Brightness Slider
+    { 32, 102, 100},    // Center Display
     { 33, 102, 120},    // Messages
     { 34, 102, 140},    // Status Bar
     { 50, 102, 160},    // Filtering
@@ -248,8 +252,6 @@ menuitem_t Menu_CreateNote[3] = // 8005AB40
     { 44, 110, 130},    // Manage Pak
 };
 
-//#define MAXFEATURES 5
-//#define MAXFEATURES 9
 #define MAXFEATURES 13
 menuitem_t Menu_Features[MAXFEATURES] = // 8005AB64
 {
@@ -405,7 +407,7 @@ void M_EncodeConfig(void)
     SavedConfig[0] = FeaturesUnlocked & 0x1;
     SavedConfig[0] += (enable_messages & 0x1) << 1;
     SavedConfig[0] += (enable_statusbar & 0x1) << 2;
-    SavedConfig[0] += (ConfgNumb & 0x7) << 3; //0-4
+    SavedConfig[0] += (ConfgNumb & 0x7) << 3; //0-5
     SavedConfig[0] += (GreenBlood & 0x1) << 6;
     SavedConfig[0] += (BlueCross & 0x1) << 7;
 
@@ -1024,15 +1026,12 @@ int M_MenuTicker(void) // 80007E0C
                         M_SaveMenuData();
 
                         MenuItem = Menu_Display;
-                        #if ENABLE_REMASTER_SPRITES == 1
-                        itemlines = 9;
-                        #else
-                        itemlines = 7;
-                        #endif
+                        itemlines = MAXDISPLAY;
                         MenuCall = M_DisplayDrawer;
                         cursorpos = 0;
+                        linepos = 0;
 
-                        MiniLoop(M_FadeInStart,M_FadeOutStart,M_MenuTicker,M_MenuGameDrawer);
+                        MiniLoop(M_FadeInStart,M_FadeOutStart,M_DisplayTicker,M_MenuGameDrawer);
                         M_RestoreMenuData(true);
                         return ga_nothing;
                     }
@@ -1180,44 +1179,6 @@ int M_MenuTicker(void) // 80007E0C
                         }
                     }
                     break;
-
-                case 9: // Brightness
-                    if (buttons & PAD_RIGHT)
-                    {
-                        brightness += 1;
-                        if (brightness <= 100)
-                        {
-                            P_RefreshBrightness();
-                            if (brightness & 1)
-                            {
-                                S_StartSound(NULL, sfx_secmove);
-                                return ga_nothing;
-                            }
-                        }
-                        else
-                        {
-                            brightness = 100;
-                        }
-                    }
-                    else if (buttons & PAD_LEFT)
-                    {
-                        brightness -= 1;
-                        if (brightness < 0)
-                        {
-                            brightness = 0;
-                        }
-                        else
-                        {
-                            P_RefreshBrightness();
-                            if (brightness & 1)
-                            {
-                                S_StartSound(NULL, sfx_secmove);
-                                return ga_nothing;
-                            }
-                        }
-                    }
-                    break;
-
                 case 11: // Options
                     if (truebuttons)
                     {
@@ -1250,28 +1211,6 @@ int M_MenuTicker(void) // 80007E0C
                         S_SetMusicVolume(MusVolume);
                         S_SetSoundVolume(SfxVolume);
 
-                        return ga_nothing;
-                    }
-                    break;
-
-                case 13: // Default Display
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_switch2);
-
-                        Display_X = 0;
-                        Display_Y = 0;
-
-                        enable_messages = true;
-                        enable_statusbar = true;
-
-                        brightness = 100;
-                        I_MoveDisplay(0,0);
-                        P_RefreshBrightness();
-
-                        TextureFilter = 0;
-                        GreenBlood = 0;
-                        BlueCross = 0;
                         return ga_nothing;
                     }
                     break;
@@ -1591,53 +1530,6 @@ int M_MenuTicker(void) // 80007E0C
                     }
                     break;
 
-                case 32: // Center Display
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_pistol);
-                        M_SaveMenuData();
-
-                        MenuCall = M_CenterDisplayDrawer;
-
-                        MiniLoop(M_FadeInStart,M_FadeOutStart,M_CenterDisplayTicker,M_MenuGameDrawer);
-                        M_RestoreMenuData(true);
-
-                        return ga_nothing;
-                    }
-                    break;
-
-                case 33: // Messages
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_switch2);
-                        enable_messages ^= true;
-                    }
-                    break;
-
-                case 34: // Status Bar
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_switch2);
-                        enable_statusbar ^= true;
-                    }
-                    break;
-
-                case 56: // Blood Color
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_switch2);
-                        GreenBlood ^= true;
-                    }
-                    break;
-
-                case 57: // Cross Color
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_switch2);
-                        BlueCross ^= true;
-                    }
-                    break;
-
                 case 35: // LOCK MONSTERS
                     /* Not available in the release code */
                     /*
@@ -1814,15 +1706,6 @@ int M_MenuTicker(void) // 80007E0C
                         players[0].cheats ^= CF_FULLBRIGHT;
                         gobalcheats ^= CF_FULLBRIGHT;
                         P_RefreshBrightness();
-                        S_StartSound(NULL, sfx_switch2);
-                        return ga_nothing;
-                    }
-                    break;
-
-                case 50: // FILTER [GEC] NEW CHEAT CODE
-                    if (truebuttons)
-                    {
-                        TextureFilter += TextureFilter < 2 ? 1 : -2;
                         S_StartSound(NULL, sfx_switch2);
                         return ga_nothing;
                     }
@@ -2133,21 +2016,228 @@ void M_ControlStickDrawer(void) // 80009738
     ST_DrawSymbol(M_SENSITIVITY + 103, 110, 69, text_alpha | 0xffffff00);
 }
 
+int M_DisplayTicker(void) // 8000A0F8
+{
+    unsigned int buttons;
+    unsigned int oldbuttons;
+    int truebuttons;
+
+    buttons = M_ButtonResponder(ticbuttons[0]);
+    oldbuttons = oldticbuttons[0] & 0xffff0000;
+
+    if ((gamevbls < gametic) && ((gametic & 3U) == 0))
+        MenuAnimationTic = (MenuAnimationTic + 1) & 7;
+
+    if (!(buttons & ALL_JPAD))
+    {
+        m_vframe1 = 0;
+    }
+    else
+    {
+        m_vframe1 -= vblsinframe[0];
+
+        if (m_vframe1 <= 0)
+        {
+            m_vframe1 = 0xf; // TICRATE/2
+
+            if (buttons & PAD_DOWN)
+            {
+                cursorpos++;
+                if (cursorpos <= MAXDISPLAY && Menu_Display[cursorpos].casepos < 0)
+                {
+                    cursorpos++;
+                    if (linepos + 7 < cursorpos) linepos++;
+                }
+
+                if (cursorpos < MAXDISPLAY)
+                {
+                    S_StartSound(NULL, sfx_switch1);
+                }
+                else
+                {
+                    cursorpos = 0;
+                    linepos = 0;
+                }
+
+                if (linepos + 7 < cursorpos) linepos++;
+            }
+            else if (buttons & PAD_UP)
+            {
+                cursorpos--;
+                if (cursorpos >= 0 && Menu_Display[cursorpos].casepos < 0)
+                {
+                    cursorpos--;
+                    if (cursorpos < linepos) linepos--;
+                }
+
+                if (cursorpos < 0)
+                {
+                    cursorpos = MAXDISPLAY - 1;
+                    linepos = MAXDISPLAY - 1 - 7;
+                }
+                else
+                {
+                    S_StartSound(NULL, sfx_switch1);
+                }
+
+                if(cursorpos < linepos) linepos--;
+            }
+        }
+    }
+
+    if (buttons & PAD_START)
+    {
+        S_StartSound(NULL, sfx_pistol);
+        return ga_exit;
+    }
+    else
+    {
+        truebuttons = (0 < (buttons ^ oldbuttons));
+
+        if (truebuttons)
+        truebuttons = (0 < (buttons & ALL_BUTTONS));
+
+        switch(MenuItem[cursorpos].casepos)
+        {
+            case 9: // Brightness
+                if (buttons & PAD_RIGHT)
+                {
+                    brightness += 1;
+                    if (brightness <= 100)
+                    {
+                        P_RefreshBrightness();
+                        if (brightness & 1)
+                        {
+                            S_StartSound(NULL, sfx_secmove);
+                            return ga_nothing;
+                        }
+                    }
+                    else
+                    {
+                        brightness = 100;
+                    }
+                }
+                else if (buttons & PAD_LEFT)
+                {
+                    brightness -= 1;
+                    if (brightness < 0)
+                    {
+                        brightness = 0;
+                    }
+                    else
+                    {
+                        P_RefreshBrightness();
+                        if (brightness & 1)
+                        {
+                            S_StartSound(NULL, sfx_secmove);
+                            return ga_nothing;
+                        }
+                    }
+                }
+                break;
+
+            case 13: // Default Display
+                if (truebuttons)
+                {
+                    S_StartSound(NULL, sfx_switch2);
+
+                    Display_X = 0;
+                    Display_Y = 0;
+
+                    enable_messages = true;
+                    enable_statusbar = true;
+
+                    brightness = 100;
+                    I_MoveDisplay(0,0);
+                    P_RefreshBrightness();
+
+                    TextureFilter = 0;
+                    GreenBlood = 0;
+                    BlueCross = 0;
+                    return ga_nothing;
+                }
+                break;
+            
+            case 32: // Center Display
+                if (truebuttons)
+                {
+                    S_StartSound(NULL, sfx_pistol);
+                    M_SaveMenuData();
+
+                    MenuCall = M_CenterDisplayDrawer;
+
+                    MiniLoop(M_FadeInStart,M_FadeOutStart,M_CenterDisplayTicker,M_MenuGameDrawer);
+                    M_RestoreMenuData(true);
+
+                    return ga_nothing;
+                }
+                break;
+
+            case 33: // Messages
+                if (truebuttons)
+                {
+                    S_StartSound(NULL, sfx_switch2);
+                    enable_messages ^= true;
+                }
+                break;
+
+            case 34: // Status Bar
+                if (truebuttons)
+                {
+                    S_StartSound(NULL, sfx_switch2);
+                    enable_statusbar ^= true;
+                }
+                break;
+
+            case 50: // FILTER [GEC] NEW CHEAT CODE
+                if (truebuttons)
+                {
+                    S_StartSound(NULL, sfx_switch2);
+                    TextureFilter += TextureFilter < 2 ? 1 : -2;
+                }
+                break;
+
+            case 56: // Blood Color
+                if (truebuttons)
+                {
+                    S_StartSound(NULL, sfx_switch2);
+                    GreenBlood ^= true;
+                }
+                break;
+
+            case 57: // Cross Color
+                if (truebuttons)
+                {
+                    S_StartSound(NULL, sfx_switch2);
+                    BlueCross ^= true;
+                }
+                break;
+
+            default:
+                if (truebuttons)
+                {
+                    S_StartSound(NULL, sfx_pistol);
+                    return ga_exit;
+                }
+                break;
+        }
+    }
+    return ga_nothing;
+}
+
 void M_DisplayDrawer(void) // 80009884
 {
     char *text;
     menuitem_t *item;
     int i, casepos;
+    int yoffset;
 
     ST_DrawString(-1, 20, "Display", text_alpha | 0xc0000000);
 
-    item = Menu_Display;
+    item = Menu_Display + linepos;
+    yoffset = 20 * linepos;
 
-    #if ENABLE_REMASTER_SPRITES == 1
-    for(i = 0; i < 9; i++)
-    #else
-    for(i = 0; i < 7; i++)
-    #endif
+    for(i = 0; i < 8; i++)
     {
         casepos = item->casepos;
 
@@ -2181,19 +2271,25 @@ void M_DisplayDrawer(void) // 80009884
                     break;
             }
         }
-        else if (casepos == 56) // BloodColor
+        else if (casepos == 56) // Blood Color
         {
             if (GreenBlood)
                 text = "Green";
             else
                 text = "Red";
         }
-        else if (casepos == 57) // BloodColor
+        else if (casepos == 57) // Cross Color
         {
             if (BlueCross)
                 text = "Blue";
             else
                 text = "Red";
+        }
+        else if (casepos == -1) // Brightness Slider
+        {
+            ST_DrawSymbol(item->x, item->y - yoffset, 68, text_alpha | 0xffffff00);
+            ST_DrawSymbol(brightness + 1 + item->x, item->y - yoffset, 69, text_alpha | 0xffffff00);
+            text = NULL;
         }
         else
         {
@@ -2201,22 +2297,25 @@ void M_DisplayDrawer(void) // 80009884
         }
 
         if (text)
-            ST_DrawString(item->x + 140, item->y, text, text_alpha | 0xc0000000);
+            ST_DrawString(item->x + 140, item->y - yoffset, text, text_alpha | 0xc0000000);
 
-        ST_DrawString(item->x, item->y, MenuText[casepos], text_alpha | 0xc0000000);
+        if (item->casepos >= 0)
+            ST_DrawString(item->x, item->y - yoffset, MenuText[casepos], text_alpha | 0xc0000000);
 
         item++;
     }
 
-    #if ENABLE_REMASTER_SPRITES == 1
-    ST_DrawSymbol(102, 60, 68, text_alpha | 0xffffff00);
-    ST_DrawSymbol(brightness + 103, 60, 69, text_alpha | 0xffffff00);
-    #else
-    ST_DrawSymbol(102, 80, 68, text_alpha | 0xffffff00);
-    ST_DrawSymbol(brightness + 103, 80, 69, text_alpha | 0xffffff00);
-    #endif
+    ST_DrawSymbol(Menu_Display[0].x - 37, Menu_Display[cursorpos - linepos].y - 9, MenuAnimationTic + 70, text_alpha | 0xffffff00);
 
-    ST_DrawSymbol(Menu_Display[0].x - 37, Menu_Display[cursorpos].y - 9, MenuAnimationTic + 70, text_alpha | 0xffffff00);
+    if (linepos != 0)
+    {
+        ST_DrawString(Menu_Display[0].x, Menu_Display[0].y - 20, "\x8F more...", text_alpha | 0xffffff00);
+    }
+
+    if ((linepos + 7) != MAXDISPLAY - 1)
+    {
+        ST_DrawString(Menu_Display[0].x, Menu_Display[7].y + 20, "\x8E more...", text_alpha | 0xffffff00);
+    }
 }
 
 void M_DrawBackground(int x, int y, int color, char *name) // 80009A68
