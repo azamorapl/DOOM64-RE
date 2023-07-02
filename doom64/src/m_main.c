@@ -42,7 +42,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT06	"\x90 Return"
 #define M_TXT07 "Music Volume"
 #define M_TXT08 "Sound Volume"
-#define M_TXT09 "Brightness"
+#define M_TXT09 "Environmental Brightness"
 #define M_TXT10 "Resume"
 #define M_TXT11 "Options"
 #define M_TXT12 "Default"
@@ -94,7 +94,8 @@ char *ControlText[] =   //8007517C
 #define M_TXT55 "Load Game"
 #define M_TXT56 "Blood Color:"
 #define M_TXT57 "Cross Color:"
-#define M_TXT58 "Show Stats:"
+#define M_TXT58 "Automap Stats:"
+#define M_TXT59 "Overall Brightness"
 
 char *MenuText[] =   // 8005ABA0
 {
@@ -110,7 +111,7 @@ char *MenuText[] =   // 8005ABA0
     M_TXT45, M_TXT46, M_TXT47,
     M_TXT48, M_TXT49, M_TXT50,  // [GEC] NEW
     M_TXT51, M_TXT52, M_TXT53, M_TXT54,
-    M_TXT55, M_TXT56, M_TXT57, M_TXT58,
+    M_TXT55, M_TXT56, M_TXT57, M_TXT58, M_TXT59,
 };
 
 menuitem_t Menu_Title[3] = // 8005A978
@@ -174,35 +175,39 @@ menuitem_t Menu_ControlStick[3] = // 8005AA38
 };
 
 #if ENABLE_REMASTER_SPRITES == 1
-#define MAXDISPLAY 11
+#define MAXDISPLAY 13
 menuitem_t Menu_Display[MAXDISPLAY] = // 8005AA5C
 #else
-#define MAXDISPLAY 9
+#define MAXDISPLAY 11
 menuitem_t Menu_Display[MAXDISPLAY] = // 8005AA5C
 #endif
 {
     #if ENABLE_REMASTER_SPRITES == 1
-    {  9, 102, 60 },    // Brightness
-    { -1, 102, 80 },    // Brightness Slider
-    { 32, 102, 100},    // Center Display
-    { 33, 102, 120},    // Messages
-    { 34, 102, 140},    // Status Bar
-    { 50, 102, 160},    // Filtering
-    { 56, 102, 180},    // Blood Color
-    { 57, 102, 200},    // Cross Color
-    { 58, 102, 220},    // Show Stats
-    { 13, 102, 240},    // Default Display
-    {  6, 102, 260},    // Return
+    {  9,  46, 60 },    // Environmental Brightness
+    { -1,  46, 80 },    // Environmental Brightness Slider
+    { 59,  46, 100},    // Overall Brightness
+    { -2,  46, 120},    // Overall Brightness Slider
+    { 32,  46, 140},    // Center Display
+    { 33,  46, 160},    // Messages
+    { 34,  46, 180},    // Status Bar
+    { 50,  46, 200},    // Filtering
+    { 56,  46, 220},    // Blood Color
+    { 57,  46, 240},    // Cross Color
+    { 58,  46, 260},    // Show Stats
+    { 13,  46, 280},    // Default Display
+    {  6,  46, 300},    // Return
     #else
-    {  9, 102, 60 },    // Brightness
-    { -1, 102, 80 },    // Brightness Slider
-    { 32, 102, 100},    // Center Display
-    { 33, 102, 120},    // Messages
-    { 34, 102, 140},    // Status Bar
-    { 50, 102, 160},    // Filtering
-    { 58, 102, 180},    // Show Stats
-    { 13, 102, 200},    // Default Display
-    {  6, 102, 220},    // Return
+    {  9,  46, 60 },    // Environmental Brightness
+    { -1,  46, 80 },    // Environmental Brightness Slider
+    { 59,  46, 100},    // Overall Brightness
+    { -2,  46, 120},    // Overall Brightness Slider
+    { 32,  46, 140},    // Center Display
+    { 33,  46, 160},    // Messages
+    { 34,  46, 180},    // Status Bar
+    { 50,  46, 200},    // Filtering
+    { 58,  46, 120},    // Show Stats
+    { 13,  46, 240},    // Default Display
+    {  6,  46, 260},    // Return
     #endif
 };
 
@@ -327,6 +332,7 @@ byte SavedConfig[16];
 boolean GreenBlood;
 boolean BlueCross;
 boolean ShowStats;
+int OverallBrightness = 0;
 
 int TempConfiguration[13] = // 8005A80C
 {
@@ -407,6 +413,8 @@ void M_EncodeConfig(void)
 {
     int i;
     int controlKey[13];
+
+    SavedConfig[2] = OverallBrightness & 0x7F; //0-100
 
     SavedConfig[3] = FeaturesUnlocked & 0x1;
     SavedConfig[3] += (enable_messages & 0x1) << 1;
@@ -515,6 +523,8 @@ void M_DecodeConfig()
     int controlKey[13];
 
     if (SavedConfig[15] != 0xCE) return;
+
+    OverallBrightness = SavedConfig[2] & 0x7F;
 
     FeaturesUnlocked = SavedConfig[3] & 0x1;
     enable_messages = (SavedConfig[3] >> 1) & 0x1;
@@ -2105,7 +2115,7 @@ int M_DisplayTicker(void) // 8000A0F8
 
         switch(MenuItem[cursorpos].casepos)
         {
-            case 9: // Brightness
+            case 9: // Environmental Brightness
                 if (buttons & PAD_RIGHT)
                 {
                     brightness += 1;
@@ -2161,6 +2171,7 @@ int M_DisplayTicker(void) // 8000A0F8
                     GreenBlood = 0;
                     BlueCross = 0;
                     ShowStats = 0;
+                    OverallBrightness = 0;
                     return ga_nothing;
                 }
                 break;
@@ -2225,6 +2236,43 @@ int M_DisplayTicker(void) // 8000A0F8
                 {
                     S_StartSound(NULL, sfx_switch2);
                     ShowStats ^= true;
+                }
+                break;
+
+            case 59: // Overall Brightness
+                if (buttons & PAD_RIGHT)
+                {
+                    OverallBrightness += 1;
+                    if (OverallBrightness <= 100)
+                    {
+                        P_RefreshBrightness();
+                        if (OverallBrightness & 1)
+                        {
+                            S_StartSound(NULL, sfx_secmove);
+                            return ga_nothing;
+                        }
+                    }
+                    else
+                    {
+                        OverallBrightness = 100;
+                    }
+                }
+                else if (buttons & PAD_LEFT)
+                {
+                    OverallBrightness -= 1;
+                    if (OverallBrightness < 0)
+                    {
+                        OverallBrightness = 0;
+                    }
+                    else
+                    {
+                        P_RefreshBrightness();
+                        if (OverallBrightness & 1)
+                        {
+                            S_StartSound(NULL, sfx_secmove);
+                            return ga_nothing;
+                        }
+                    }
                 }
                 break;
 
@@ -2293,10 +2341,16 @@ void M_DisplayDrawer(void) // 80009884
         {
             text = ShowStats ? "On" : "Off";
         }
-        else if (casepos == -1) // Brightness Slider
+        else if (casepos == -1) // Environmental Brightness Slider
         {
             ST_DrawSymbol(item->x, item->y - yoffset, 68, text_alpha | 0xffffff00);
             ST_DrawSymbol(brightness + 1 + item->x, item->y - yoffset, 69, text_alpha | 0xffffff00);
+            text = NULL;
+        }
+        else if (casepos == -2) // Overall Brightness Slider
+        {
+            ST_DrawSymbol(item->x, item->y - yoffset, 68, text_alpha | 0xffffff00);
+            ST_DrawSymbol(OverallBrightness + 1 + item->x, item->y - yoffset, 69, text_alpha | 0xffffff00);
             text = NULL;
         }
         else
@@ -2305,7 +2359,7 @@ void M_DisplayDrawer(void) // 80009884
         }
 
         if (text)
-            ST_DrawString(item->x + 140, item->y - yoffset, text, text_alpha | 0xc0000000);
+            ST_DrawString(item->x + 160, item->y - yoffset, text, text_alpha | 0xc0000000);
 
         if (item->casepos >= 0)
             ST_DrawString(item->x, item->y - yoffset, MenuText[casepos], text_alpha | 0xc0000000);

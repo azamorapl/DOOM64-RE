@@ -721,6 +721,7 @@ void P_SetLightFactor(int lightfactor) // 8000F458
         __osSetFpcCsr(fpstatset);
 
         l_flt = (float)factor * ((float)lightfactor / 100.0);
+        l_flt *= 1 + (OverallBrightness / 100.0);
 
         v = (int)l_flt;
         
