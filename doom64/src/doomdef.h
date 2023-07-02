@@ -828,6 +828,7 @@ extern int TextureFilter;
 extern int Autorun;
 extern boolean GreenBlood;
 extern boolean BlueCross;
+extern boolean ShowStats;
 
 int M_RunTitle(void); // 80007630
 

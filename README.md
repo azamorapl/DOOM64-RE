@@ -28,6 +28,7 @@ The focus of this project is to bring features from Nightdive's 2020 [Doom 64 re
 In addition, the following extra features were added:
 
 - Restored the third zombie sight and death sounds.
+- Option to display level stats in the automap.
 - Adds support for the Expansion Pak for resource intensive maps (thanks [JNMartin](https://github.com/Immorpher/Doom-64-Merciless-Edition/pull/5/files)).
 - F3DEX2 rendering microcode (from [Doom 64 Merciless Edition](https://github.com/Immorpher/Doom-64-Merciless-Edition)).
 - Adds the fifth difficulty from DOOM64-RE, renamed to Hardcore!

@@ -94,6 +94,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT55 "Load Game"
 #define M_TXT56 "Blood Color:"
 #define M_TXT57 "Cross Color:"
+#define M_TXT58 "Show Stats:"
 
 char *MenuText[] =   // 8005ABA0
 {
@@ -109,7 +110,7 @@ char *MenuText[] =   // 8005ABA0
     M_TXT45, M_TXT46, M_TXT47,
     M_TXT48, M_TXT49, M_TXT50,  // [GEC] NEW
     M_TXT51, M_TXT52, M_TXT53, M_TXT54,
-    M_TXT55, M_TXT56, M_TXT57
+    M_TXT55, M_TXT56, M_TXT57, M_TXT58,
 };
 
 menuitem_t Menu_Title[3] = // 8005A978
@@ -173,10 +174,10 @@ menuitem_t Menu_ControlStick[3] = // 8005AA38
 };
 
 #if ENABLE_REMASTER_SPRITES == 1
-#define MAXDISPLAY 10
+#define MAXDISPLAY 11
 menuitem_t Menu_Display[MAXDISPLAY] = // 8005AA5C
 #else
-#define MAXDISPLAY 8
+#define MAXDISPLAY 9
 menuitem_t Menu_Display[MAXDISPLAY] = // 8005AA5C
 #endif
 {
@@ -189,8 +190,9 @@ menuitem_t Menu_Display[MAXDISPLAY] = // 8005AA5C
     { 50, 102, 160},    // Filtering
     { 56, 102, 180},    // Blood Color
     { 57, 102, 200},    // Cross Color
-    { 13, 102, 220},    // Default Display
-    {  6, 102, 240},    // Return
+    { 58, 102, 220},    // Show Stats
+    { 13, 102, 240},    // Default Display
+    {  6, 102, 260},    // Return
     #else
     {  9, 102, 60 },    // Brightness
     { -1, 102, 80 },    // Brightness Slider
@@ -198,8 +200,9 @@ menuitem_t Menu_Display[MAXDISPLAY] = // 8005AA5C
     { 33, 102, 120},    // Messages
     { 34, 102, 140},    // Status Bar
     { 50, 102, 160},    // Filtering
-    { 13, 102, 180},    // Default Display
-    {  6, 102, 200},    // Return
+    { 58, 102, 180},    // Show Stats
+    { 13, 102, 200},    // Default Display
+    {  6, 102, 220},    // Return
     #endif
 };
 
@@ -323,6 +326,7 @@ int Autorun = 0;
 byte SavedConfig[13];
 boolean GreenBlood;
 boolean BlueCross;
+boolean ShowStats;
 
 int TempConfiguration[13] = // 8005A80C
 {
@@ -411,13 +415,14 @@ void M_EncodeConfig(void)
     SavedConfig[0] += (GreenBlood & 0x1) << 6;
     SavedConfig[0] += (BlueCross & 0x1) << 7;
 
-    SavedConfig[1] = MusVolume;
+    SavedConfig[1] = MusVolume & 0x7F; //0-100
     
-    SavedConfig[2] = SfxVolume;
+    SavedConfig[2] = SfxVolume & 0x7F; //0-100
 
-    SavedConfig[3] = brightness;
+    SavedConfig[3] = brightness & 0x7F; //0-100
 
-    SavedConfig[4] = M_SENSITIVITY;
+    SavedConfig[4] = M_SENSITIVITY & 0x7F; //0-100
+    SavedConfig[4] += (ShowStats & 0x1) << 7;
 
     for (i = 0; i < 13; i++)
     {
@@ -518,13 +523,14 @@ void M_DecodeConfig()
     GreenBlood = (SavedConfig[0] >> 6) & 0x1;
     BlueCross = (SavedConfig[0] >> 7) & 0x1;
 
-    MusVolume = SavedConfig[1];
+    MusVolume = SavedConfig[1] & 0x7F;
 
-    SfxVolume = SavedConfig[2];
+    SfxVolume = SavedConfig[2] & 0x7F;
 
-    brightness = SavedConfig[3];
+    brightness = SavedConfig[3] & 0x7F;
 
-    M_SENSITIVITY = SavedConfig[4];
+    M_SENSITIVITY = SavedConfig[4] & 0x7F;
+    ShowStats = (SavedConfig[4] >> 7) & 0x1;
 
     controlKey[0] = SavedConfig[5] & 0xF;
     controlKey[1] = (SavedConfig[5] >> 4) & 0xF;
@@ -2154,6 +2160,7 @@ int M_DisplayTicker(void) // 8000A0F8
                     TextureFilter = 0;
                     GreenBlood = 0;
                     BlueCross = 0;
+                    ShowStats = 0;
                     return ga_nothing;
                 }
                 break;
@@ -2213,6 +2220,15 @@ int M_DisplayTicker(void) // 8000A0F8
                 }
                 break;
 
+            case 58: // Show Stats
+                if (truebuttons)
+                {
+                    S_StartSound(NULL, sfx_switch2);
+                    ShowStats ^= true;
+                }
+                break;
+
+            case 6: // Return
             default:
                 if (truebuttons)
                 {
@@ -2243,17 +2259,11 @@ void M_DisplayDrawer(void) // 80009884
 
         if (casepos == 33) // Messages:
         {
-            if (enable_messages)
-                text = "On";
-            else
-                text = "Off";
+            text = enable_messages ? "On" : "Off";
         }
         else if (casepos == 34) // Status Bar:
         {
-            if (enable_statusbar)
-                text = "On";
-            else
-                text = "Off";
+            text = enable_statusbar ? "On" : "Off";
         }
         else if (casepos == 50)
         {
@@ -2273,17 +2283,15 @@ void M_DisplayDrawer(void) // 80009884
         }
         else if (casepos == 56) // Blood Color
         {
-            if (GreenBlood)
-                text = "Green";
-            else
-                text = "Red";
+            text = GreenBlood ? "Green" : "Red";
         }
         else if (casepos == 57) // Cross Color
         {
-            if (BlueCross)
-                text = "Blue";
-            else
-                text = "Red";
+            text = BlueCross ? "Blue" : "Red";
+        }
+        else if (casepos == 58) // Show Stats
+        {
+            text = ShowStats ? "On" : "Off";
         }
         else if (casepos == -1) // Brightness Slider
         {
@@ -2817,7 +2825,7 @@ void M_SavePakDrawer(void) // 8000AB44
                 D_memmove(buffer, "empty");
             }
             else {
-                D_memmove(savedata, &Pak_Data[i * 32]);
+                D_memcpy(savedata, &Pak_Data[i * 32], 3);
                 switch ((int)(savedata[2] - '0'))
                 {
                     #if ENABLE_NIGHTMARE == 1
@@ -3025,7 +3033,7 @@ void M_LoadPakDrawer(void) // 8000B270
             D_memmove(buffer, "no save");
         }
         else {
-            D_memmove(savedata, &Pak_Data[i * 32]);
+            D_memcpy(savedata, &Pak_Data[i * 32], 3);
             switch ((int)(savedata[2] - '0'))
             {
                 #if ENABLE_NIGHTMARE == 1
