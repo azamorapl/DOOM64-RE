@@ -2,6 +2,30 @@
 #include "p_local.h"
 #include "st_main.h"
 
+#if FPS_COUNTER == 1
+
+OSTime frame_times[TICRATE];
+u8 current_frame_time_index = 0;
+f32 gFPS = 0;
+
+// Call once per frame
+f32 calculate_and_update_fps()
+{
+    OSTime new_time = osGetTime();
+    OSTime old_time = frame_times[current_frame_time_index];
+    frame_times[current_frame_time_index] = new_time;
+
+    current_frame_time_index++;
+    if (current_frame_time_index >= TICRATE)
+	{
+        current_frame_time_index = 0;
+    }
+    gFPS = ((f32)TICRATE * 1000000.0f) / (s32)OS_CYCLES_TO_USEC(new_time - old_time);
+    return gFPS;
+}
+
+#endif
+
 extern void G_PlayerFinishLevel (int player);
 
 boolean		gamepaused = true; // 800A6270
@@ -306,6 +330,13 @@ void P_Drawer (void) // 80021AC8
         if (demoplayback == false)
             ST_Drawer();
     }
+	
+	#if FPS_COUNTER == 1
+	
+	f32 apparent_framerate = calculate_and_update_fps();
+	ST_DrawNumber(160, 200, (int) apparent_framerate, 0, PACKRGBA(255,255,255,255));
+	
+	#endif
 
     if (MenuCall)
     {
